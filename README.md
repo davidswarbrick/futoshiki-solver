@@ -8,7 +8,7 @@ I'm sure there are simpler ways to go about the task, both with neater code and 
 
 ### Puzzle Description
 
-The first task was to setup a logic structure for the puzzles. I decided to split the logic and number sections into separate 2D arrays (lists), and wrote a function to print the two together. For logic I used the unicode characters: < > &#2227; &#2228;.
+The first task was to setup a logic structure for the puzzles. I decided to split the logic and number sections into separate 2D arrays (lists), and wrote a function to print the two together. For logic I used the unicode characters: < > &#8743; &#8744;.
 
 The raw logic input is done in an easily readable way, however to use it practically one wishes to know what the logic is surrounding each square. I wrote a function to return an array of the surrounding logic for each square,  `logic_matrix`.
 
