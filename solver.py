@@ -54,6 +54,21 @@ logic3 = [['', '>', '', ''],
           ['>', '', '', '<'],
           [u"\u2227", '', '', '', ''],
           ['', '', '', '']]
+puzzle4 = [[4, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0], ]
+
+logic4 = [['', '', '', ''],
+          ['', '', '', '', ''],
+          ['>', '', '', '>'],
+          ['', '', '', '', ''],
+          ['', '', '', '>'],
+          [u"\u2228", u"\u2228", '', '', ''],
+          ['', '', '', '>'],
+          [u"\u2228", u"\u2228", '', '', ''],
+          ['', '', '<', '']]
 
 
 def puzzle_printer(puzzle, logic):
@@ -400,6 +415,46 @@ def find_matches(pc, j, i):
     return pc
 
 
+def corner_rule(logic_matrix, pc, j, i):
+    match_list = pc[j][i]
+    if len(match_list) != 2:
+        return pc
+    else:
+        row = pc[j].copy()
+        col = [x[i] for x in pc.copy()]
+        row_matches = [index for index, val in enumerate(row) if val == match_list]
+        if len(row_matches) != 2:
+            return pc
+        else:
+            i1, i2 = row_matches[0], row_matches[1]
+            if ((logic_matrix[j][i1][1] == u"\u2227" and logic_matrix[j][i2][3] == u"\u2228") and pc[j+1][i1] == pc[j-1][i2]):
+                # print("Both pairs less than same pair - applying corner rule 1")
+                num_to_remove = max(pc[j+1][i1])
+                try:
+                    pc[j+1][i2].remove(num_to_remove)
+                except ValueError:
+                    pass
+                try:
+                    pc[j-1][i1].remove(num_to_remove)
+                except ValueError:
+                    pass
+            if (logic_matrix[j][i1][3] == u"\u2228" and logic_matrix[j][i2][1] == u"\u2227" and pc[j-1][i1] == pc[j+1][i2]):
+                # print("Both pairs less than same pair - applying corner rule 2")
+                num_to_remove = max(pc[j-1][i1])
+                try:
+                    pc[j+1][i1].remove(num_to_remove)
+                except ValueError:
+                    pass
+                try:
+                    pc[j-1][i2].remove(num_to_remove)
+                except ValueError:
+                    pass
+
+        # col_matches = [index for index, val in enumerate(col) if val == match_list]
+
+        return pc
+
+
 def possible_values(puzzle, logic, p):
     logic_layout = logic_finder(logic)
     pc = deepcopy(p)
@@ -436,6 +491,7 @@ def possible_values(puzzle, logic, p):
                 if len(pc[j][i]) == 2 or len(pc[j][i]) == 3:
                     pc = find_matches(pc, j, i)
                 pc = poss_locations(pc, j, i)
+                pc = corner_rule(logic_layout, pc, j, i)
 
     return pc
 
@@ -448,8 +504,12 @@ def possible_values(puzzle, logic, p):
 # p_orig = possible_values(puzzle1, logic1, p)
 # possible_values(puzzle1, logic1, p)
 
+def sol_print(p):
+    for line in p:
+        print(line)
 
-def consistent_past_values(puzzle, logic):
+
+def solve(puzzle, logic):
     p = [[[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
          [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
          [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
@@ -458,16 +518,34 @@ def consistent_past_values(puzzle, logic):
     p_prev = None
     t = 0
 
+    print("Finding a solution to the puzzle:")
+    puzzle_printer(puzzle, logic)
+
     while p != p_prev and t < 15:
         p_prev = p
         p = possible_values(puzzle, logic, p_prev)
         t += 1
 
     print("Found a consistent set of possible values after {} iterations".format(t))
-    return p
+    solved = True
+    solution = []
+    for j in range(5):
+        line = []
+        for i in range(5):
+            if len(p[j][i]) == 1:
+                line.append(p[j][i][0])
+            else:
+                solved = False
+                break
 
+        solution.append(line)
 
-# print(p[0])
+    if solved and valid(solution, logic):
+        print("Problem solved!")
+        puzzle_printer(solution, logic)
+    else:
+        print("Problem not solved, possible values:")
+        sol_print(p)
 
 
 a = [[[3, 4, 5], [2, 4], [1, 2, 3, 4], [2, 4, 5], [1, 2, 3, 4, 5]],
@@ -500,25 +578,11 @@ e = [[[5], [4], [1], [2], [3]],
      [[1], [5], [4], [3], [2]],
      [[4], [3], [2], [5], [1]]]
 
+solve(puzzle1, logic1)
 
-def sol_print(p):
-    for line in p:
-        print(line)
-        # print("{:4d} {:4d} {:4d} {:4d} {:4d}".format(line[0], line[1], line[2], line[3], line[4]))
+solve(puzzle3, logic3)
 
-        # print("{},{} : Checking values: {}".format(j, i, p[j][i]))
-# print(valid(puzzle2, logic2))
-# puzzle_printer(puzzle1, logic1)
-#
-# p = consistent_past_values(puzzle1, logic1)
-
-
-# print("Is this the same as previous best guess? {}".format(d == p))
-# sol_print(p)
-puzzle_printer(puzzle1, logic1)
-sol_print(consistent_past_values(puzzle1, logic1))
-puzzle_printer(puzzle3, logic3)
-sol_print(consistent_past_values(puzzle3, logic3))
+solve(puzzle4, logic4)
 
 # print(recursive_less_than(logic_finder(logic3), p2, 2, 2))
 # t = 0
