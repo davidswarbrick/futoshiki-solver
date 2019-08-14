@@ -59,6 +59,11 @@ puzzle4 = [[4, 0, 0, 0, 0],
            [0, 0, 0, 0, 0],
            [0, 0, 0, 0, 0],
            [0, 0, 0, 0, 0], ]
+puzzle42 = [[4, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [2, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0], ]
 
 logic4 = [['', '', '', ''],
           ['', '', '', '', ''],
@@ -69,6 +74,21 @@ logic4 = [['', '', '', ''],
           ['', '', '', '>'],
           [u"\u2228", u"\u2228", '', '', ''],
           ['', '', '<', '']]
+
+jamespuzzle = [[0, 0, 0, 0, 0],
+               [0, 0, 0, 0, 0],
+               [0, 0, 0, 0, 0],
+               [0, 0, 0, 0, 0],
+               [0, 0, 0, 0, 0], ]
+jameslogic = [['', '', '', ''],
+              [u"\u2227", '', u"\u2228", '', ''],
+              ['', '', '', ''],
+              [u"\u2227", '', '', '', ''],
+              ['<', '', '', ''],
+              ['', '', '', u"\u2227", u"\u2228"],
+              ['', '>', '', '<'],
+              ['', '', '', '', ''],
+              ['', '>', '', '']]
 
 
 def puzzle_printer(puzzle, logic):
@@ -496,20 +516,69 @@ def possible_values(puzzle, logic, p):
     return pc
 
 
-# puzzle_printer(puzzle2, logic2)
+def brute_force(puzzle, logic, p):
+    logic_matrix = logic_finder(logic)
+    new_p = deepcopy(p)
+    new_puzzle = deepcopy(puzzle)
+    box_lookup = {}
+    for m in range(2, 6):
+        box_lookup[m] = []
 
-# p = [[[1, 2, 3, 4, 5]] * 5] * 5 # List comprehension causes issues with deletion (most likely due to implied copies)
+    for j in range(5):
+        for i in range(5):
+            if len(p[j][i]) == 1:
+                new_puzzle[j][i] = new_p[j][i][0]
+            else:
+                box_lookup[len(new_p[j][i])].append((j, i))
+    # print(box_lookup)
+    solved = False
+    for m in range(2, 6):
+        for box in box_lookup[m]:
+            print("Attempting brute force at cell {},{}".format(box[0], box[1]))
+            for index in range(len(new_p[box[0]][box[1]])):
+                test_puzzle = new_puzzle
+                # Try value at index as the value for this box:
+                test_puzzle[box[0]][box[1]] = new_p[box[0]][box[1]][index]
+                pc, t = consistent_past_values(test_puzzle, logic)
+                solved = True
+                solution = []
+                for j in range(5):
+                    line = []
+                    for i in range(5):
+                        if len(pc[j][i]) == 1:
+                            line.append(pc[j][i][0])
+                        else:
+                            solved = False
+                            break
+                    solution.append(line)
+                if solved and valid(solution, logic):
+                    print("Problem solved through brute forcing")
+                    puzzle_printer(solution, logic)
+                    return pc
+                else:
+                    continue
+    print("Not able to solve by brute forcing, you might have to figure it out mate.")
+    return new_p
+    #
+    #
+    # solved = True
+    # for j in range(5):
+    #     for i in range(5):
+    #         solved = solved and len(pc[j][i]) == 1
+    # if solved:
+    #     return pc
+    # else:
+    #     continue
 
-
-# p_orig = possible_values(puzzle1, logic1, p)
-# possible_values(puzzle1, logic1, p)
 
 def sol_print(p):
     for line in p:
         print(line)
 
+# p = [[[1, 2, 3, 4, 5]] * 5] * 5 # List comprehension causes issues with deletion (most likely due to implied copies)
 
-def solve(puzzle, logic):
+
+def consistent_past_values(puzzle, logic):
     p = [[[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
          [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
          [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
@@ -518,15 +587,18 @@ def solve(puzzle, logic):
     p_prev = None
     t = 0
 
-    print("Finding a solution to the puzzle:")
-    puzzle_printer(puzzle, logic)
-
     while p != p_prev and t < 15:
         p_prev = p
         p = possible_values(puzzle, logic, p_prev)
         t += 1
 
-    print("Found a consistent set of possible values after {} iterations".format(t))
+    return p, t
+
+
+def solve(puzzle, logic):
+    print("Finding a solution to the puzzle:")
+    puzzle_printer(puzzle, logic)
+    p, t = consistent_past_values(puzzle, logic)
     solved = True
     solution = []
     for j in range(5):
@@ -537,15 +609,29 @@ def solve(puzzle, logic):
             else:
                 solved = False
                 break
-
         solution.append(line)
 
     if solved and valid(solution, logic):
-        print("Problem solved!")
+        print("Problem solved after {} iterations!".format(t))
         puzzle_printer(solution, logic)
     else:
-        print("Problem not solved, possible values:")
+        print("Problem not solved after {} iterations, possible values:".format(t))
         sol_print(p)
+        brute_q = input("Do you want to brute force a solution? (y/n)")
+        if brute_q == "y":
+            p = brute_force(puzzle, logic, p)
+            # solved = True
+            # solution = []
+            # for j in range(5):
+            #     line = []
+            #     for i in range(5):
+            #         if len(p[j][i]) == 1:
+            #             line.append(p[j][i][0])
+            #         else:
+            #             solved = False
+            #             break
+            #     solution.append(line)
+            # if solved and valid(solution, logic):
 
 
 a = [[[3, 4, 5], [2, 4], [1, 2, 3, 4], [2, 4, 5], [1, 2, 3, 4, 5]],
@@ -578,12 +664,12 @@ e = [[[5], [4], [1], [2], [3]],
      [[1], [5], [4], [3], [2]],
      [[4], [3], [2], [5], [1]]]
 
-solve(puzzle1, logic1)
+# solve(puzzle1, logic1)
 
-solve(puzzle3, logic3)
+# solve(puzzle3, logic3)
 
 solve(puzzle4, logic4)
-
+# solve(jamespuzzle, jameslogic)
 # print(recursive_less_than(logic_finder(logic3), p2, 2, 2))
 # t = 0
 # pz = deepcopy(puzzle1)
