@@ -75,29 +75,41 @@ logic4 = [['', '', '', ''],
           [u"\u2228", u"\u2228", '', '', ''],
           ['', '', '<', '']]
 
-jamespuzzle = [[0, 0, 0, 0, 0],
-               [0, 0, 0, 0, 0],
-               [0, 0, 0, 0, 0],
-               [0, 0, 0, 0, 0],
-               [0, 0, 0, 0, 0], ]
-jameslogic = [['', '', '', ''],
-              [u"\u2227", '', u"\u2228", '', ''],
-              ['', '', '', ''],
-              [u"\u2227", '', '', '', ''],
-              ['<', '', '', ''],
-              ['', '', '', u"\u2227", u"\u2228"],
-              ['', '>', '', '<'],
-              ['', '', '', '', ''],
-              ['', '>', '', '']]
+
+dadpuzzle = [[0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0],
+             [2, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0], ]
+
+dadlogic = [['', '', '', ''],
+            ['', u"\u2228", '', u"\u2228", ''],
+            ['', '', '<', ''],
+            [u"\u2227", '', '', '', ''],
+            ['', '', '', ''],
+            ['', '', u"\u2228", '', u"\u2227"],
+            ['', '', '', ''],
+            ['', '', '', '', u"\u2228"],
+            ['', '>', '', '']]
 
 
 def puzzle_printer(puzzle, logic):
     for i, l_line in enumerate(logic):
         if (i+1) % 2:  # number lines
-            print('{n[0]}{l[0]:1}{n[1]}{l[1]:1}{n[2]}{l[2]:1}{n[3]}{l[3]:1}{n[4]}'.format(
-                n=puzzle[i//2], l=l_line))
+            line = ''
+            for j in range(len(puzzle[0])-1):
+                line += '{n}{l:1}'.format(n=puzzle[i//2][j], l=l_line[j])
+            line += '{}'.format(puzzle[i//2][-1])
+            print(line)
+            # print('{n[0]}{l[0]:1}{n[1]}{l[1]:1}{n[2]}{l[2]:1}{n[3]}{l[3]:1}{n[4]}'.format(
+            #     n=puzzle[i//2], l=l_line))
         else:  # logic lines
-            print('{l[0]:1} {l[1]:1} {l[2]:1} {l[3]:1} {l[4]:1}'.format(l=l_line))
+            line = ''
+            for l in range(len(l_line)-1):
+                line += '{:1} '.format(l_line[l])
+            line += '{}'.format(l_line[-1])
+            print(line)
+            # print('{l[0]:1} {l[1]:1} {l[2]:1} {l[3]:1} {l[4]:1}'.format(l=l_line))
 
 
 def single_cell_tester(cell_number, neighbours, nearby_logic, only_check_two=False):
@@ -124,21 +136,51 @@ def single_cell_tester(cell_number, neighbours, nearby_logic, only_check_two=Fal
     return result
 
 
-def logic_finder(logic):
-    # logic_matrix = [[[None]*4] * 5]*5
-    logic_matrix = [[[None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-                    [[None, None, None, None], [None, None, None, None], [None, None, None, None],
-                     [None, None, None, None], [None, None, None, None]],
-                    [[None, None, None, None], [None, None, None, None], [None, None, None, None],
-                     [None, None, None, None], [None, None, None, None]],
-                    [[None, None, None, None], [None, None, None, None], [None, None, None, None],
-                     [None, None, None, None], [None, None, None, None]],
-                    [[None, None, None, None], [None, None, None, None], [None, None,
-                                                                          None, None], [None, None, None, None], [None, None, None, None]]
-                    ]
+def empty_array_returner(puzzle_size, item_size, contents):
+    e = []
+    for j in range(puzzle_size):
+        line = []
+        for i in range(puzzle_size):
+            if item_size == 1:
+                item = contents
+            else:
+                item = []
+                for k in range(item_size):
+                    if contents is None:
+                        item.append(contents)
+                    elif contents == "range":
+                        # print("Returning range using dimension sizes to infer length")
+                        item.append(k+1)
+            line.append(item)
+        e.append(line)
+    return e
+    # p = [[[1, 2, 3, 4, 5]] * 5] * 5 # List comprehension causes issues with deletion (most likely due to implied copies)
+    # logic_matrix2 = [[[None]*4] * 5]*5 this does not work!
+    # logic_matrix2 = [[[None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
+    #                  [[None, None, None, None], [None, None, None, None], [None, None, None, None],
+    #                   [None, None, None, None], [None, None, None, None]],
+    #                  [[None, None, None, None], [None, None, None, None], [None, None, None, None],
+    #                   [None, None, None, None], [None, None, None, None]],
+    #                  [[None, None, None, None], [None, None, None, None], [None, None, None, None],
+    #                   [None, None, None, None], [None, None, None, None]],
+    #                  [[None, None, None, None], [None, None, None, None], [None, None,
+    #                                                                        None, None], [None, None, None, None], [None, None, None, None]]
+    #                  ]
+    # assert(logic_matrix == logic_matrix2)
+    # p2 = [[[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
+    #       [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
+    #       [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
+    #       [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
+    #       [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]]]
+    # assert(p == p2)
 
-    for j in range(5):
-        for i in range(5):
+
+def logic_finder(logic):
+    # Puzzle size is always the same as the length of the second line of logic.
+    puzzle_size = len(logic[1])
+    logic_matrix = empty_array_returner(puzzle_size, 4, None)
+    for j in range(puzzle_size):
+        for i in range(puzzle_size):
             # Finding logic to test this cell against
             try:
                 # right
@@ -236,42 +278,14 @@ def valid(puzzle, logic):
                 all_cells_valid = False
         l = line.copy()
         l.sort()
-        if l != [1, 2, 3, 4, 5]:
+        # Check the line sorted is the same as an array of 1->size of puzzle
+        if l != [k+1 for k in range(len(puzzle[0]))]:
             print(
-                "The line {} does not have solely the numbers 1-5 (inclusive), therefore is invalid".format(
-                    puzzle.index(line)))
+                "The line {} does not have solely the numbers 1-{} (inclusive), therefore is invalid".format(
+                    puzzle.index(line), len(puzzle[0])))
             all_lines_filled = False
 
     return (all_cells_valid, all_lines_filled, zero_flag), logic_failures
-
-#
-# def valid_for_all_possible_neighbours(logic_matrix, p, j, i):
-#     # Check each value in current square that it could exist with combinations nearby
-#     not_valid_numbers = []
-#     for value in p[j][i]:
-#         ok = True
-#         # Check that this value is compatible with the possible neighbours
-#         for index in range(5):
-#             neighbours = get_possible_neighbours(p=p, j=j, i=i, index=index)
-#             ok = ok & single_cell_tester(value, neighbours=neighbours,
-#                                          nearby_logic=logic_matrix[j][i])
-#         if not ok:
-#             not_valid_numbers.append(value)
-#
-#     for number in not_valid_numbers:
-#         p[j][i].remove(number)
-#     return p
-    # p[j][i] = [x for x in p[j][i] if ]
-    # if nearby_logic[0] == '>':
-    #     recursive_more_than(logic_matrix, p, j, i+1)
-    # elif nearby_logic[1] == u"\u2228":
-    #     recursive_more_than(logic_matrix, p, j+1, i)
-    # elif nearby_logic[2] == '<':
-    #     recursive_more_than(logic_matrix, p, j, i-1)
-    # elif nearby_logic[3] == u"\u2227":
-    #     recursive_more_than(logic_matrix, p, j-1, i)
-    # except ValueError:
-    #     pass
 
 
 def recursive_more_than(logic_matrix, p, j, i):
@@ -345,7 +359,7 @@ def recursive_less_than(logic_matrix, p, j, i):
 def line_match(row, match_list):
     row_matches = [index for index, val in enumerate(row) if val == match_list]
     if len(row_matches) == len(match_list):
-        non_matched_row_indices = [x for x in range(5) if x not in row_matches]
+        non_matched_row_indices = [x for x in range(len(row)) if x not in row_matches]
         for index in non_matched_row_indices:
             try:
                 for num in match_list:
@@ -382,7 +396,8 @@ def line_match(row, match_list):
 
                         # print("Found {} matches, removing {} from row ".format(
                             # len(new_row_matches), new_match_value))
-                        non_matched_row_indices = [x for x in range(5) if x not in new_row_matches]
+                        non_matched_row_indices = [x for x in range(
+                            len(row)) if x not in new_row_matches]
                         for index in non_matched_row_indices:
                             for num in new_match_value:
                                 try:
@@ -395,7 +410,7 @@ def line_match(row, match_list):
 
 
 def only_possible_location(line, index):
-    other_indices = [0, 1, 2, 3, 4]
+    other_indices = [k for k in range(len(line))]
     other_indices.remove(index)
 
     poss_values = line[index]
@@ -418,7 +433,7 @@ def poss_locations(pc, j, i):
     pc[j] = row
     col = [x[i] for x in pc.copy()]
     col = only_possible_location(col, j)
-    for m in range(5):
+    for m in range(len(pc[0])):
         pc[m][i] = col[m]
     return pc
 
@@ -486,7 +501,7 @@ def possible_values(puzzle, logic, p):
                 else:
                     no = number
                 # print('Removing {} from column and line due to appearance at {}, {}'.format(number, j, i))
-                other_line = [0, 1, 2, 3, 4]
+                other_line = [k for k in range(len(pc[0]))]
                 other_line.remove(i)
 
                 for k in other_line:
@@ -495,7 +510,7 @@ def possible_values(puzzle, logic, p):
                         pc[j][k].remove(no)
                     except (ValueError, IndexError):
                         pass
-                other_column = [0, 1, 2, 3, 4]
+                other_column = [k for k in range(len(pc[0]))]
                 other_column.remove(j)
                 for l in other_column:
                     try:
@@ -520,19 +535,21 @@ def brute_force(puzzle, logic, p):
     logic_matrix = logic_finder(logic)
     new_p = deepcopy(p)
     new_puzzle = deepcopy(puzzle)
+    # Box lookup is a dictionary of box locations, indexed by number of possible values for each location
     box_lookup = {}
-    for m in range(2, 6):
+    # We want boxes with two values, up to boxes with any possible value (ie size of puzzle)
+    for m in range(2, len(p[0])+1):
         box_lookup[m] = []
 
-    for j in range(5):
-        for i in range(5):
+    for j in range(len(new_puzzle[0])):
+        for i in range(len(new_puzzle[0])):
             if len(p[j][i]) == 1:
                 new_puzzle[j][i] = new_p[j][i][0]
             else:
                 box_lookup[len(new_p[j][i])].append((j, i))
     # print(box_lookup)
     solved = False
-    for m in range(2, 6):
+    for m in range(2, len(p[0])+1):
         for box in box_lookup[m]:
             print("Attempting brute force at cell {},{}".format(box[0], box[1]))
             for index in range(len(new_p[box[0]][box[1]])):
@@ -542,9 +559,9 @@ def brute_force(puzzle, logic, p):
                 pc, t = consistent_past_values(test_puzzle, logic)
                 solved = True
                 solution = []
-                for j in range(5):
+                for j in range(len(new_puzzle[0])):
                     line = []
-                    for i in range(5):
+                    for i in range(len(new_puzzle[0])):
                         if len(pc[j][i]) == 1:
                             line.append(pc[j][i][0])
                         else:
@@ -559,31 +576,15 @@ def brute_force(puzzle, logic, p):
                     continue
     print("Not able to solve by brute forcing, you might have to figure it out mate.")
     return new_p
-    #
-    #
-    # solved = True
-    # for j in range(5):
-    #     for i in range(5):
-    #         solved = solved and len(pc[j][i]) == 1
-    # if solved:
-    #     return pc
-    # else:
-    #     continue
 
 
 def sol_print(p):
     for line in p:
         print(line)
 
-# p = [[[1, 2, 3, 4, 5]] * 5] * 5 # List comprehension causes issues with deletion (most likely due to implied copies)
-
 
 def consistent_past_values(puzzle, logic):
-    p = [[[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
-         [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
-         [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
-         [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
-         [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]]]
+    p = empty_array_returner(len(puzzle[0]), len(puzzle[0]), 'range')
     p_prev = None
     t = 0
 
@@ -601,9 +602,9 @@ def solve(puzzle, logic):
     p, t = consistent_past_values(puzzle, logic)
     solved = True
     solution = []
-    for j in range(5):
+    for j in range(len(puzzle[0])):
         line = []
-        for i in range(5):
+        for i in range(len(puzzle[0])):
             if len(p[j][i]) == 1:
                 line.append(p[j][i][0])
             else:
@@ -620,121 +621,11 @@ def solve(puzzle, logic):
         brute_q = input("Do you want to brute force a solution? (y/n)")
         if brute_q == "y":
             p = brute_force(puzzle, logic, p)
-            # solved = True
-            # solution = []
-            # for j in range(5):
-            #     line = []
-            #     for i in range(5):
-            #         if len(p[j][i]) == 1:
-            #             line.append(p[j][i][0])
-            #         else:
-            #             solved = False
-            #             break
-            #     solution.append(line)
-            # if solved and valid(solution, logic):
 
 
-a = [[[3, 4, 5], [2, 4], [1, 2, 3, 4], [2, 4, 5], [1, 2, 3, 4, 5]],
-     [[3, 4, 5], [1, 2], [3, 4, 5], [1, 2], [3, 4]],
-     [[1, 2, 3, 4, 5], [1, 2, 4, 5], [1, 2, 3], [2, 4], [4, 5]],
-     [[1, 2, 4, 5], [1, 2, 4, 5], [1, 2, 4, 5], [3], [1, 2, 4, 5]],
-     [[4, 5], [3], [1, 2, 4, 5], [1, 2, 4, 5], [1, 2, 4, 5]]]
+solve(puzzle1, logic1)
 
-b = [[[3, 4, 5], [2, 4], [1, 2, 3, 4], [2, 4, 5], [1, 2, 3, 4, 5]],
-     [[3, 4, 5], [1, 2], [3, 4, 5], [1, 2], [3, 4]],
-     [[1, 2, 3, 4, 5], [1, 2, 4, 5], [1, 2, 3], [2, 4], [4, 5]],
-     [[1, 2, 4, 5], [1, 2, 4, 5], [1, 2, 4, 5], [3], [1, 2, 4, 5]],
-     [[4, 5], [3], [1, 2, 4, 5], [1, 2, 4, 5], [1, 2, 4, 5]]]
-
-c = [[[3, 4, 5], [2, 4], [1, 2, 3, 4], [2, 4, 5], [1, 2, 3, 4, 5]],
-     [[3, 4, 5], [1, 2], [3, 4, 5], [1, 2], [3, 4]],
-     [[1, 2], [1, 2, 4, 5], [1, 2, 3], [2, 4], [4, 5]],
-     [[1, 2], [1, 2, 4, 5], [1, 2, 4, 5], [3], [1, 2, 4, 5]],
-     [[4, 5], [3], [1, 2, 4, 5], [1, 2, 4, 5], [1, 2, 4, 5]]]
-
-d = [[[3, 4, 5], [2, 4], [1, 2, 3, 4], [2, 4, 5], [1, 2, 3, 4, 5]],
-     [[3, 4, 5], [1, 2], [3, 4, 5], [1, 2], [3, 4]],
-     [[1, 2], [1, 2, 4, 5], [3], [4], [5]],
-     [[1, 2], [1, 2, 4, 5], [1, 2, 4, 5], [3], [1, 2, 4, 5]],
-     [[4, 5], [3], [1, 2, 4, 5], [1, 2, 4, 5], [1, 2, 4, 5]]]
-
-e = [[[5], [4], [1], [2], [3]],
-     [[3], [2], [5], [1], [4]],
-     [[2], [1], [3], [4], [5]],
-     [[1], [5], [4], [3], [2]],
-     [[4], [3], [2], [5], [1]]]
-
-# solve(puzzle1, logic1)
-
-# solve(puzzle3, logic3)
+solve(puzzle3, logic3)
 
 solve(puzzle4, logic4)
-# solve(jamespuzzle, jameslogic)
-# print(recursive_less_than(logic_finder(logic3), p2, 2, 2))
-# t = 0
-# pz = deepcopy(puzzle1)
-# poss = consistent_past_values(pz, logic1)
-# solution_found, problem_location = valid(pz, logic1)
-# prev_locations = []
-# prob_loc = (0, 0)
-#
-# last_tried_values = [[[], [], [], [], []],
-#                      [[], [], [], [], []],
-#                      [[], [], [], [], []],
-#                      [[], [], [], [], []],
-#                      [[], [], [], [], []]]
-#
-# print(valid(puzzle1, logic1))
-
-# #
-# while t < 1000 and not solution_found:
-#     poss = consistent_past_values(pz, logic1)
-#     solution_found, prob_loc = valid(pz, logic1)
-#     for j in range(5):
-#         for i in range(5):
-#             if len(poss[j][i]) == 1:
-#                 pz[j][i] = poss[j][i][0]
-#             elif len(poss[j][i]) == 2:
-#                 for x in poss[j][i]:
-#                     if x not in last_tried_values[j][i]:
-#                         pz[j][i] = x
-#                         last_tried_values[j][i].append(x)
-#                         prev_locations.append((j, i))
-#                         break
-#                     elif x in last_tried_values[j][i] and x!= poss[j][i][-1]: # has been tried and is not the last value:
-#                         pass
-#
-#     if prob_loc[1] == 0:
-#         print("Previous error was due to line being filled improperly. {} {}".format(
-#             prob_loc[0], prob_loc[1]))
-#         continue
-#     elif prob_loc == attempted_solutions[-1]:
-#         print("Last adjustment caused problem, jumping there.")
-#         j = prob_loc[0]
-#         i = prob_loc[1]
-#         poss_for_cell = p[j][i]
-#         for poss in poss_for_cell:
-#             if poss not in last_tried_values[j][i]:
-#                 pz[j][i] = poss
-#                 last_tried_values[j][i].append(poss)
-#                 solution_found, prob_loc = valid(pz, logic1)
-#                 attempted_solutions.append((j, i))
-#                 break
-
-#     for j in range(5):
-#         for i in range(5):
-#             poss_for_cell = p[j][i]
-#             if len(poss_for_cell) == 1:
-#                 pz[j][i] = p[j][i][0]
-#                 print("Found single value {} for cell {},{}".format(p[j][i], j, i))
-#                 prev_locations.append((j, i))
-#             else:  # len(poss_for_cell) < 4:
-#                 # print("Found {} values for cell {},{}".format(len(p[j][i]), j, i))
-#                 # print("Setting random value from possible values")
-#                 for poss in poss_for_cell:
-#                     if poss not in last_tried_values[j][i]:
-#                         print('Trying new value')
-#                         pz[j][i] = poss
-#                         last_tried_values[j][i].append(poss)
-#                         solution_found, prob_loc = valid(pz, logic1)
-#                         attempted_solutions.append((j, i))
+solve(dadpuzzle, dadlogic)
