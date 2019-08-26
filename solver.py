@@ -706,7 +706,7 @@ def brute_force(puzzle, logic, p):
                 test_puzzle[box[0]][box[1]] = new_p[box[0]][box[1]][index]
                 pc, t = consistent_past_values(test_puzzle, logic)
                 # pc, t, solved = solve(test_puzzle, logic, brute_force_if_needed=True)
-                # # solved = True
+                solved = True
                 # # TODO fix this bit up so that it brute forces all options below a current option, if all of those don't work then it removes the current option.
                 # if not solved:
                 #     new_p[box[0]][box[1]].pop(index)
@@ -791,8 +791,8 @@ def solve(puzzle, logic, brute_force_if_needed=False):
 # solve(puzzle3, logic3)
 #
 # solve(puzzle4, logic4)
-# solve(dadpuzzle, dadlogic)
+solve(dadpuzzle, dadlogic)
 # puzzle_printer(six_by_six1, six_by_six_logic1)
-# solve(six_by_six1, six_by_six_logic1)
-# solve(seven_by_seven1, seven_by_seven_logic1)
-solve(nine_by_nine1, nine_by_nine_logic1, brute_force_if_needed=True)
+solve(six_by_six1, six_by_six_logic1)
+solve(seven_by_seven1, seven_by_seven_logic1)
+# solve(nine_by_nine1, nine_by_nine_logic1, brute_force_if_needed=True)
