@@ -179,6 +179,68 @@ seven_by_seven_logic1 = [['', '', '<', '', '', ''],
                          ]
 
 
+nine_by_nine = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                ]
+
+nine_by_nine_logic = [['', '', '', '', '', '', '', ''],
+                      ['', '', '', '', '', '', '', '', ''],
+                      ['', '', '', '', '', '', '', ''],
+                      ['', '', '', '', '', '', '', '', ''],
+                      ['', '', '', '', '', '', '', ''],
+                      ['', '', '', '', '', '', '', '', ''],
+                      ['', '', '', '', '', '', '', ''],
+                      ['', '', '', '', '', '', '', '', ''],
+                      ['', '', '', '', '', '', '', ''],
+                      ['', '', '', '', '', '', '', '', ''],
+                      ['', '', '', '', '', '', '', ''],
+                      ['', '', '', '', '', '', '', '', ''],
+                      ['', '', '', '', '', '', '', ''],
+                      ['', '', '', '', '', '', '', '', ''],
+                      ['', '', '', '', '', '', '', ''],
+                      ['', '', '', '', '', '', '', '', ''],
+                      ['', '', '', '', '', '', '', ''],
+                      ]
+
+
+nine_by_nine1 = [[0, 0, 0, 0, 2, 0, 0, 0, 0],
+                 [3, 0, 0, 0, 0, 8, 0, 0, 0],
+                 [0, 0, 0, 0, 7, 0, 0, 0, 0],
+                 [0, 0, 0, 3, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                 [7, 0, 0, 0, 0, 0, 0, 0, 0],
+                 [6, 0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 2]
+                 ]
+
+nine_by_nine_logic1 = [['', '', '', '', '', '', '>', ''],
+                       ['∧', '', '∧', '', '', '∧', '∧', '', ''],
+                       ['', '', '', '', '>', '', '', ''],
+                       ['∧', '', '', '', '', '', '', '', ''],
+                       ['<', '', '<', '', '', '<', '', ''],
+                       ['', '∨', '∨', '', '', '', '', '', '∨'],
+                       ['', '', '', '', '>', '', '', ''],
+                       ['', '', '∨', '', '', '∧', '', '', ''],
+                       ['', '', '', '', '', '', '', ''],
+                       ['', '', '', '∧', '∧', '∧', '', '', '∨'],
+                       ['', '>', '', '', '', '', '>', ''],
+                       ['', '', '', '∧', '', '∧', '', '', '∨'],
+                       ['', '', '', '', '', '', '', ''],
+                       ['', '', '', '∧', '', '', '', '', ''],
+                       ['', '>', '', '<', '>', '', '', ''],
+                       ['∧', '', '∨', '', '', '', '∨', '', '∨'],
+                       ['', '', '', '', '', '', '', ''],
+                       ]
+
+
 def puzzle_printer(puzzle, logic):
     for i, l_line in enumerate(logic):
         if (i+1) % 2:  # number lines
@@ -643,7 +705,15 @@ def brute_force(puzzle, logic, p):
                 # Try value at index as the value for this box:
                 test_puzzle[box[0]][box[1]] = new_p[box[0]][box[1]][index]
                 pc, t = consistent_past_values(test_puzzle, logic)
-                solved = True
+                # pc, t, solved = solve(test_puzzle, logic, brute_force_if_needed=True)
+                # # solved = True
+                # # TODO fix this bit up so that it brute forces all options below a current option, if all of those don't work then it removes the current option.
+                # if not solved:
+                #     new_p[box[0]][box[1]].pop(index)
+                #     # remove option that does not solve puzzle
+                # #####################################################
+                # # Old stuff down here
+
                 solution = []
                 for j in range(len(new_puzzle[0])):
                     line = []
@@ -654,6 +724,7 @@ def brute_force(puzzle, logic, p):
                             solved = False
                             break
                     solution.append(line)
+                #####################################################
                 if solved and valid(solution, logic):
                     print("Problem solved through brute forcing")
                     puzzle_printer(solution, logic)
@@ -682,7 +753,7 @@ def consistent_past_values(puzzle, logic):
     return p, t
 
 
-def solve(puzzle, logic):
+def solve(puzzle, logic, brute_force_if_needed=False):
     print("Finding a solution to the puzzle:")
     puzzle_printer(puzzle, logic)
     p, t = consistent_past_values(puzzle, logic)
@@ -701,12 +772,18 @@ def solve(puzzle, logic):
     if solved and valid(solution, logic):
         print("Problem solved after {} iterations!".format(t))
         puzzle_printer(solution, logic)
+        return p, t, solved
     else:
         print("Problem not solved after {} iterations, possible values:".format(t))
         sol_print(p)
-        brute_q = input("Do you want to brute force a solution? (y/n)")
-        if brute_q == "y":
+        if brute_force_if_needed:
+            print("Brute Forcing")
             p = brute_force(puzzle, logic, p)
+        else:
+            brute_q = input("Do you want to brute force a solution? (y/n)")
+            if brute_q == "y":
+                p = brute_force(puzzle, logic, p)
+        return p, t, solved
 
 
 # solve(puzzle1, logic1)
@@ -716,5 +793,6 @@ def solve(puzzle, logic):
 # solve(puzzle4, logic4)
 # solve(dadpuzzle, dadlogic)
 # puzzle_printer(six_by_six1, six_by_six_logic1)
-solve(six_by_six1, six_by_six_logic1)
-solve(seven_by_seven1, seven_by_seven_logic1)
+# solve(six_by_six1, six_by_six_logic1)
+# solve(seven_by_seven1, seven_by_seven_logic1)
+solve(nine_by_nine1, nine_by_nine_logic1, brute_force_if_needed=True)
