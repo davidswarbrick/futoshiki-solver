@@ -1,4 +1,5 @@
 from copy import deepcopy
+import multiprocessing as mp
 
 
 class FutoshikiPuzzle:
@@ -118,14 +119,14 @@ class FutoshikiPuzzle:
             for i, n in enumerate(line):
                 if n == 0:
                     # any zeroes mean not completed puzzle
-                    print('Not Complete (Zeroes Present) Checking Logic')
+                    # print('Not Complete (Zeroes Present) Checking Logic')
                     zero_flag = True
                     self.solved = False
                 else:
                     # Applying the tests to the cell
                     cell_valid = self.single_cell_tester(j, i, only_check_two=True)
                 if not cell_valid:
-                    print('Logic Failure caused by cell: {},{} (line, index)'.format(j, i))
+                    # print('Logic Failure caused by cell: {},{} (line, index)'.format(j, i))
                     logic_failures.append((j, i))
                     all_cells_valid = False
                     self.solved = False
@@ -133,9 +134,9 @@ class FutoshikiPuzzle:
             l.sort()
             # Check the line sorted is the same as an array of 1->size of puzzle
             if l != [k+1 for k in range(self.size)]:
-                print(
-                    "The line {} does not have solely the numbers 1-{} (inclusive), therefore is invalid".format(
-                        self.solution.index(line), self.size))
+                # print(
+                #     "The line {} does not have solely the numbers 1-{} (inclusive), therefore is invalid".format(
+                #         self.solution.index(line), self.size))
                 all_lines_filled = False
                 self.solved = False
         if all_cells_valid and all_lines_filled and not zero_flag:
@@ -473,18 +474,31 @@ class FutoshikiPuzzle:
             print("Solution found after {} iterations:".format(t))
             print(self.puzzle_printer(self.solution, self.puzzle_logic))
 
-    def brute_force(self, max_brute_force_level=300):
+    def brute_force(self, max_brute_force_level=None):
         """Try each possible value for each cell until a solution is found."""
-        print("Brute Forcing at depth: {}".format(self.brute_force_level))
-        for m in range(2, self.size):
-            for cell in self.cell_lookup[m]:
-                print("Attempting brute force at cell {},{}".format(cell[0], cell[1]))
-                for index in range(len(self.possible_values[cell[0]][cell[1]])):
-                    test_puzzle = deepcopy(self.solution)
-                    test_puzzle[cell[0]][cell[1]] = self.possible_values[cell[0]][cell[1]][index]
-                    t = FutoshikiPuzzle(test_puzzle, self.puzzle_logic)
-                    try:
-                        t.solve()
+        if max_brute_force_level is None:
+            max_brute_force_level = self.size
+        if self.solved:
+            print("Problem is solved, no need for brute force")
+            return
+        else:
+            # print("Brute Forcing at depth: {}".format(self.brute_force_level))
+            for m in range(2, self.size):
+                # Parallelize this setup using multiprocessing
+                for cell in self.cell_lookup[m]:
+                    print("Attempting brute force at depth {} in cell {},{}".format(
+                        self.brute_force_level, cell[0], cell[1]))
+                    for index in range(len(self.possible_values[cell[0]][cell[1]])):
+                        test_puzzle = deepcopy(self.solution)
+                        test_puzzle[cell[0]][cell[1]
+                                             ] = self.possible_values[cell[0]][cell[1]][index]
+                        t = FutoshikiPuzzle(test_puzzle, self.puzzle_logic)
+                        t.brute_force_level = self.brute_force_level + 1
+                        try:
+                            t.solve()
+                        except KeyError:
+                            # Must have zero possible values, meaning this index is an invalid option
+                            pass
                         if t.solved:
                             print("Problem solved through brute forcing at depth {}".format(
                                 self.brute_force_level))
@@ -492,24 +506,44 @@ class FutoshikiPuzzle:
                             self._solution_update()
                             self.solved = True
                             return
-                    except KeyError:
-                        # This happens when there are no possible values for a cell, meaning this result is not ok
-                        # self.possible_values[cell[0]][cell[1]].pop(index)
-                        pass
+                        else:
+                            if t.brute_force_level < max_brute_force_level:
+                                try:
+                                    t.brute_force(max_brute_force_level)
+                                    if t.solved:
+                                        print("Problem solved through brute forcing at depth {}".format(
+                                            self.brute_force_level))
+                                        self.solution = t.solution
+                                        self._solution_update()
+                                        self.solved = True
+                                        return
+                                    else:
+                                        pass
+                                except KeyError:
+                                    # Must have zero possible values
+                                    pass
+                            else:
+                                pass
+        return
+        # except KeyError:
+        #     # This happens when there are no possible values for a cell, meaning this result is not ok
+        #     print("Key error occurred")
+        #     self.possible_values[cell[0]][cell[1]].pop(index)
+        #     pass
         # If not solved by now, brute force again, starting at the same point
-        for m in range(2, self.size):
-            for cell in self.cell_lookup[m]:
-                print("Restarting brute force at cell {},{}".format(cell[0], cell[1]))
-                for index in range(len(self.possible_values[cell[0]][cell[1]])):
-                    test_puzzle = self.solution
-                    test_puzzle[cell[0]][cell[1]] = self.possible_values[cell[0]][cell[1]][index]
-                    t = FutoshikiPuzzle(test_puzzle, self.puzzle_logic)
-                    t.brute_force_level = self.brute_force_level + 1
-                    if t.brute_force_level < max_brute_force_level:
-                        t.solve()
-                        # Don't need to check if problem is solved, we simply do this to update the possible values to more relevant/realistic values before brute forcing.
-                        t.brute_force(max_brute_force_level)
-                        return
+        # for m in range(2, self.size):
+        #     for cell in self.cell_lookup[m]:
+        #         print("Restarting brute force at cell {},{}".format(cell[0], cell[1]))
+        #         for index in range(len(self.possible_values[cell[0]][cell[1]])):
+        #             test_puzzle = self.solution
+        #             test_puzzle[cell[0]][cell[1]] = self.possible_values[cell[0]][cell[1]][index]
+        #             t = FutoshikiPuzzle(test_puzzle, self.puzzle_logic)
+        #             t.brute_force_level = self.brute_force_level + 1
+        #             if t.brute_force_level < max_brute_force_level:
+        #                 t.solve()
+        #                 # Don't need to check if problem is solved, we simply do this to update the possible values to more relevant/realistic values before brute forcing.
+        #                 t.brute_force(max_brute_force_level)
+        #                 return
 
     def __init__(self, initial_puzzle_numbers, puzzle_logic):
         self.puzzle_numbers = deepcopy(initial_puzzle_numbers)
@@ -517,7 +551,7 @@ class FutoshikiPuzzle:
         self.size = len(initial_puzzle_numbers[0])
         self.solution = deepcopy(initial_puzzle_numbers)
         self.solved = False
-        self.brute_force_level = 1
+        self.brute_force_level = 0
         self.possible_values = self.empty_array_returner(self.size, self.size, 'range')
         self.logic_matrix = self.empty_array_returner(self.size, 4, None)
         self.cell_lookup = {}

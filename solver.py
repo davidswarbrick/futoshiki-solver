@@ -781,7 +781,7 @@ def solve(puzzle, logic, brute_force_if_needed=False):
 
 p2 = FutoshikiPuzzle(nine_by_nine1, nine_by_nine_logic1)
 p2.solve()
-p2.brute_force()
+p2.brute_force(1)
 # solve(puzzle1, logic1)
 #
 # solve(puzzle3, logic3)
