@@ -1,4 +1,6 @@
 from copy import deepcopy
+from Futoshiki import FutoshikiPuzzle
+
 puzzle1 = [[0, 0, 0, 0, 0],
            [0, 0, 0, 0, 0],
            [0, 0, 0, 0, 0],
@@ -240,48 +242,9 @@ nine_by_nine_logic1 = [['', '', '', '', '', '', '>', ''],
                        ['', '', '', '', '', '', '', ''],
                        ]
 
-
-def puzzle_printer(puzzle, logic):
-    for i, l_line in enumerate(logic):
-        if (i+1) % 2:  # number lines
-            line = ''
-            for j in range(len(puzzle[0])-1):
-                line += '{n}{l:1}'.format(n=puzzle[i//2][j], l=l_line[j])
-            line += '{}'.format(puzzle[i//2][-1])
-            print(line)
-            # print('{n[0]}{l[0]:1}{n[1]}{l[1]:1}{n[2]}{l[2]:1}{n[3]}{l[3]:1}{n[4]}'.format(
-            #     n=puzzle[i//2], l=l_line))
-        else:  # logic lines
-            line = ''
-            for l in range(len(l_line)-1):
-                line += '{:1} '.format(l_line[l])
-            line += '{}'.format(l_line[-1])
-            print(line)
-            # print('{l[0]:1} {l[1]:1} {l[2]:1} {l[3]:1} {l[4]:1}'.format(l=l_line))
-
-
-def single_cell_tester(cell_number, neighbours, nearby_logic, only_check_two=False):
-    # "Only check two" allows for the fact that checking only right and down for all squares will be equally valid and quicker.
-    result = True
-    if nearby_logic[0] == '>' and neighbours[0] is not None:
-        result = result & (cell_number > neighbours[0])
-    if nearby_logic[1] == u"\u2228" and neighbours[1] is not None:
-        result = result & (cell_number > neighbours[1])
-    if nearby_logic[2] == '<' and neighbours[2] is not None and not only_check_two:
-        result = result & (cell_number > neighbours[2])
-    if nearby_logic[3] == u"\u2227"and neighbours[3] is not None and not only_check_two:
-        result = result & (cell_number > neighbours[3])
-
-    if nearby_logic[0] == '<'and neighbours[0] is not None and neighbours[0] != 0:
-        result = result & (cell_number < neighbours[0])
-    if nearby_logic[1] == u"\u2227" and neighbours[1] is not None and neighbours[1] != 0:
-        result = result & (cell_number < neighbours[1])
-    if nearby_logic[2] == '>' and neighbours[2] is not None and neighbours[2] != 0 and not only_check_two:
-        result = result & (cell_number < neighbours[2])
-    if nearby_logic[3] == u"\u2228" and neighbours[3] is not None and neighbours[3] != 0 and not only_check_two:
-        result = result & (cell_number < neighbours[3])
-
-    return result
+############################
+# Functional Below this line
+############################
 
 
 def empty_array_returner(puzzle_size, item_size, contents):
@@ -302,25 +265,23 @@ def empty_array_returner(puzzle_size, item_size, contents):
             line.append(item)
         e.append(line)
     return e
-    # p = [[[1, 2, 3, 4, 5]] * 5] * 5 # List comprehension causes issues with deletion (most likely due to implied copies)
-    # logic_matrix2 = [[[None]*4] * 5]*5 this does not work!
-    # logic_matrix2 = [[[None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-    #                  [[None, None, None, None], [None, None, None, None], [None, None, None, None],
-    #                   [None, None, None, None], [None, None, None, None]],
-    #                  [[None, None, None, None], [None, None, None, None], [None, None, None, None],
-    #                   [None, None, None, None], [None, None, None, None]],
-    #                  [[None, None, None, None], [None, None, None, None], [None, None, None, None],
-    #                   [None, None, None, None], [None, None, None, None]],
-    #                  [[None, None, None, None], [None, None, None, None], [None, None,
-    #                                                                        None, None], [None, None, None, None], [None, None, None, None]]
-    #                  ]
-    # assert(logic_matrix == logic_matrix2)
-    # p2 = [[[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
-    #       [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
-    #       [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
-    #       [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
-    #       [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]]]
-    # assert(p == p2)
+
+
+def puzzle_printer(puzzle, logic):
+    for i, l_line in enumerate(logic):
+        if (i+1) % 2:  # number lines
+            line = ''
+            for j in range(len(puzzle[0])-1):
+                line += '{n}{l:1}'.format(n=puzzle[i//2][j], l=l_line[j])
+            line += '{}'.format(puzzle[i//2][-1])
+            print(line)
+
+        else:  # logic lines
+            line = ''
+            for l in range(len(l_line)-1):
+                line += '{:1} '.format(l_line[l])
+            line += '{}'.format(l_line[-1])
+            print(line)
 
 
 def logic_finder(logic):
@@ -380,6 +341,30 @@ def get_neighbours(puzzle, j, i):
         pass
 
     return neighbours
+
+
+def single_cell_tester(cell_number, neighbours, nearby_logic, only_check_two=False):
+    # "Only check two" allows for the fact that checking only right and down for all squares will be equally valid and quicker.
+    result = True
+    if nearby_logic[0] == '>' and neighbours[0] is not None:
+        result = result & (cell_number > neighbours[0])
+    if nearby_logic[1] == u"\u2228" and neighbours[1] is not None:
+        result = result & (cell_number > neighbours[1])
+    if nearby_logic[2] == '<' and neighbours[2] is not None and not only_check_two:
+        result = result & (cell_number > neighbours[2])
+    if nearby_logic[3] == u"\u2227"and neighbours[3] is not None and not only_check_two:
+        result = result & (cell_number > neighbours[3])
+
+    if nearby_logic[0] == '<'and neighbours[0] is not None and neighbours[0] != 0:
+        result = result & (cell_number < neighbours[0])
+    if nearby_logic[1] == u"\u2227" and neighbours[1] is not None and neighbours[1] != 0:
+        result = result & (cell_number < neighbours[1])
+    if nearby_logic[2] == '>' and neighbours[2] is not None and neighbours[2] != 0 and not only_check_two:
+        result = result & (cell_number < neighbours[2])
+    if nearby_logic[3] == u"\u2228" and neighbours[3] is not None and neighbours[3] != 0 and not only_check_two:
+        result = result & (cell_number < neighbours[3])
+
+    return result
 
 
 def get_possible_neighbours(p, j, i, index=0):
@@ -786,13 +771,24 @@ def solve(puzzle, logic, brute_force_if_needed=False):
         return p, t, solved
 
 
+# p1 = FutoshikiPuzzle(puzzle1, logic1)
+# # print(p1)
+# p1.solve()
+# print(p1.solution)
+# for x in p1.possible_values:
+#     print(x)
+# solve(puzzle1, logic1)
+
+p2 = FutoshikiPuzzle(nine_by_nine1, nine_by_nine_logic1)
+p2.solve()
+p2.brute_force()
 # solve(puzzle1, logic1)
 #
 # solve(puzzle3, logic3)
 #
 # solve(puzzle4, logic4)
-solve(dadpuzzle, dadlogic)
+# solve(dadpuzzle, dadlogic)
 # puzzle_printer(six_by_six1, six_by_six_logic1)
-solve(six_by_six1, six_by_six_logic1)
-solve(seven_by_seven1, seven_by_seven_logic1)
+# solve(six_by_six1, six_by_six_logic1)
+# solve(seven_by_seven1, seven_by_seven_logic1)
 # solve(nine_by_nine1, nine_by_nine_logic1, brute_force_if_needed=True)
