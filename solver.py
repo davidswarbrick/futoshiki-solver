@@ -781,7 +781,7 @@ def solve(puzzle, logic, brute_force_if_needed=False):
 
 p2 = FutoshikiPuzzle(nine_by_nine1, nine_by_nine_logic1)
 p2.solve()
-p2.brute_force(1)
+# p2.brute_force(1)
 # solve(puzzle1, logic1)
 #
 # solve(puzzle3, logic3)
@@ -789,6 +789,14 @@ p2.brute_force(1)
 # solve(puzzle4, logic4)
 # solve(dadpuzzle, dadlogic)
 # puzzle_printer(six_by_six1, six_by_six_logic1)
-# solve(six_by_six1, six_by_six_logic1)
+p1 = FutoshikiPuzzle(six_by_six1, six_by_six_logic1)
+p1.solve()
+if not p1.solved:
+    p1.brute_force(1)
+
+p3 = FutoshikiPuzzle(seven_by_seven1, seven_by_seven_logic1)
+p3.solve()
+if not p3.solved:
+    p3.brute_force(1)
 # solve(seven_by_seven1, seven_by_seven_logic1)
 # solve(nine_by_nine1, nine_by_nine_logic1, brute_force_if_needed=True)

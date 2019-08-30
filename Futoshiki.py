@@ -125,11 +125,11 @@ class FutoshikiPuzzle:
                 else:
                     # Applying the tests to the cell
                     cell_valid = self.single_cell_tester(j, i, only_check_two=True)
-                if not cell_valid:
-                    # print('Logic Failure caused by cell: {},{} (line, index)'.format(j, i))
-                    logic_failures.append((j, i))
-                    all_cells_valid = False
-                    self.solved = False
+                    if not cell_valid:
+                        # print('Logic Failure caused by cell: {},{} (line, index)'.format(j, i))
+                        logic_failures.append((j, i))
+                        all_cells_valid = False
+                        self.solved = False
             l = line.copy()
             l.sort()
             # Check the line sorted is the same as an array of 1->size of puzzle
@@ -452,6 +452,13 @@ class FutoshikiPuzzle:
                         pass
             return
 
+    def not_solved_print(self):
+        print("Not solved, but current state of solution:")
+        print(FutoshikiPuzzle.puzzle_printer(self.solution, self.puzzle_logic))
+        print("And current possible values:")
+        for line in self.possible_values:
+            print(line)
+
     def solve(self, max_iterations=20):
         """Solve the Futoshiki Puzzle using the algorithms implemented in this class."""
         print("Solving Futoshiki")
@@ -473,6 +480,8 @@ class FutoshikiPuzzle:
         if len(self.cell_lookup[1]) == self.size * self.size and self.solved:
             print("Solution found after {} iterations:".format(t))
             print(self.puzzle_printer(self.solution, self.puzzle_logic))
+        else:
+            self.not_solved_print()
 
     def brute_force(self, max_brute_force_level=None):
         """Try each possible value for each cell until a solution is found."""
