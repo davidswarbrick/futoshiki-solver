@@ -32,7 +32,6 @@ class FutoshikiGenerator(FutoshikiPuzzle):
             logic.append(line)
         return logic
 
-<<<<<<< HEAD
     def generate_numbers(self, max_brute_force_level=2):
         try:
             self.solve()
@@ -58,20 +57,6 @@ class FutoshikiGenerator(FutoshikiPuzzle):
         self.size = size
         self.generated_logic = self.generate_logic(size)
         super().__init__(FutoshikiPuzzle.empty_array_returner(size, 1, 0), self.generated_logic)
-=======
-    def generate_numbers(self):
-        for j in range(self.size):
-            for i in range(self.size):
-                self.puzzle = self.possible_values[j][i][randrange(
-                    0, len(self.possible_values[j][i]))]
-                self._solution_update()
-
-    def __init__(self, size):
-        self.size = size
-        self.generated_logic = self.generate_logic(size)
-        self.initial_puzzle = FutoshikiPuzzle.empty_array_returner(size, 1, 0)
-        super().__init__(self.initial_puzzle, self.generated_logic)
->>>>>>> generator
 
 
 # l = FutoshikiGenerator.generate_logic(5, 0.1)
@@ -79,7 +64,6 @@ class FutoshikiGenerator(FutoshikiPuzzle):
 # # FutoshikiPuzzle.puzzle_printer(p, l)
 # fp = FutoshikiPuzzle(p, l)
 fp = FutoshikiGenerator(5)
-<<<<<<< HEAD
 fp.generate_numbers(1)
 
 # large_fp = FutoshikiGenerator(9, 0.5)
@@ -92,8 +76,3 @@ fp.generate_numbers(1)
 # if not fp.solved:
 #     print("Unable to solve puzzle:")
 #     print(fp)
-=======
-# print(p)
-fp.solve()
-fp.brute_force()
->>>>>>> generator
