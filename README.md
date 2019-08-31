@@ -1,8 +1,10 @@
 # Futoshiki Solver
 
-On a bored August afternoon in 2019 I attempted the logic games in the Times, and became stuck on a particular Futoshiki puzzle. I decided that the task of a Futoshiki (namely to order the numbers 1-5 in each row and column fulfilling the logic present) would be a reasonably simple puzzle for a computer programme to solve, and that instead of figuring out the next step I should instead write a program to do the work for me. Three days, a couple of very late nights and ~500 lines of Python later I had solved the inital puzzle (both via the old-school & digital approaches), but not **every** conceivable puzzle, at least for 5 x 5 options. I then got distracted by discovering 7 x 7 Futoshikis :sweat_smile: which kept me occupied until re-opening my A&R Cambridge A60 for some repairs (another article to come soon on those).
+On a bored August afternoon in 2019 I attempted the logic games in the Times, and became stuck on a particular Futoshiki puzzle. I decided that the task of a Futoshiki (namely to order the numbers 1-5 in each row and column fulfilling the logic present) would be a reasonably simple puzzle for a computer programme to solve, and that instead of figuring out the next step I should instead write a program to do the work for me. Three days, a couple of very late nights and ~500 lines of Python later I had solved the inital puzzle (both via the old-school & digital approaches), but not __every__ conceivable puzzle, at least for 5 x 5 options. I then got distracted by discovering 7 x 7 Futoshikis :sweat_smile: which kept me occupied until re-opening my A&R Cambridge A60 for some repairs (another article to come soon on those).
 
 I'm sure there are simpler ways to go about the task, both with neater code and a cleaner algorithm, however I attempted this with no references & purely for fun.
+
+**EDIT**: Solving Futoshikis (or any Latin Square puzzle) has been chategorized as NP-complete, thus the methods I detail here are strictly for futoshiki puzzles. 
 
 ## Code Structure
 
@@ -26,7 +28,7 @@ Now onto actually solving the puzzles! Initially the solver assumes any of the n
 
 ### Recursive Logic Strategies
 
-One of the key things any keen Futoshiki solver (such as myself and my Dad) does when they see a puzzle is note down any places where there are multiple greater/less than signs in a row. If for example there's 3>\_>\_, then the only option is of course 3>2>1. A simple way of doing this is to ensure that "5" isn't an option in any location that is "less than" another, and that "1" isn't an option in any location "more than" another. My functions go a step further and examine the **possible** values in neighbouring squares, only allowing those that make logical sense. I'm particularly proud of the recursive nature of the function, which will check neighbouring squares if there's a change in the current square, but ideally it would ripple changes through & re-run itself. At the moment running the solver code multiple times is a quick fix for this.
+One of the key things any keen Futoshiki solver (such as myself and my Dad) does when they see a puzzle is note down any places where there are multiple greater/less than signs in a row. If for example there's 3>\_>\_, then the only option is of course 3>2>1. A simple way of doing this is to ensure that "5" isn't an option in any location that is "less than" another, and that "1" isn't an option in any location "more than" another. My functions go a step further and examine the __possible__ values in neighbouring squares, only allowing those that make logical sense. I'm particularly proud of the recursive nature of the function, which will check neighbouring squares if there's a change in the current square, but ideally it would ripple changes through & re-run itself. At the moment running the solver code multiple times is a quick fix for this.
 
 ### Only Possible Location
 
@@ -40,10 +42,9 @@ This is a slightlier trickier strategy to code and explain. If two positions in 
 - [x] Puzzle Input
 - [x] Validity Checker
 - [x] Solve original target puzzle
-- [ ] Solve all 5 x 5 Futoshikis
-- [ ] Solve all higher order Futoshikis
+- [x] Solve all 5 x 5 Futoshikis
+- [x] Solve all higher order Futoshikis (pending brute forcing improvements)
 - [ ] Character Recognition for scanning in puzzles
 - [ ] Phone app
 - [ ] ML Attempt at same problem ?
 - [ ] Futoshiki problem creator ?
-- [ ] Become Futoshiki God
