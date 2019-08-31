@@ -480,6 +480,7 @@ class FutoshikiPuzzle:
         if len(self.cell_lookup[1]) == self.size * self.size and self.solved:
             print("Solution found after {} iterations:".format(t))
             print(self.puzzle_printer(self.solution, self.puzzle_logic))
+            self.solvable_puzzle_numbers = self.puzzle_numbers
         else:
             self.not_solved_print()
 
@@ -511,6 +512,7 @@ class FutoshikiPuzzle:
                         if t.solved:
                             print("Problem solved through brute forcing at depth {}".format(
                                 self.brute_force_level))
+                            self.solvable_puzzle_numbers = t.solvable_puzzle_numbers
                             self.solution = t.solution
                             self._solution_update()
                             self.solved = True
@@ -522,6 +524,7 @@ class FutoshikiPuzzle:
                                     if t.solved:
                                         print("Problem solved through brute forcing at depth {}".format(
                                             self.brute_force_level))
+                                        self.solvable_puzzle_numbers = t.solvable_puzzle_numbers
                                         self.solution = t.solution
                                         self._solution_update()
                                         self.solved = True
@@ -556,6 +559,7 @@ class FutoshikiPuzzle:
 
     def __init__(self, initial_puzzle_numbers, puzzle_logic):
         self.puzzle_numbers = deepcopy(initial_puzzle_numbers)
+        self.solvable_puzzle_numbers = None
         self.puzzle_logic = deepcopy(puzzle_logic)
         self.size = len(initial_puzzle_numbers[0])
         self.solution = deepcopy(initial_puzzle_numbers)
