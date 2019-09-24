@@ -1,10 +1,10 @@
 # Futoshiki Solver
 
-On a bored August afternoon in 2019 I attempted the logic games in the Times, and became stuck on a particular Futoshiki puzzle. I decided that the task of a Futoshiki (namely to order the numbers 1-5 in each row and column fulfilling the logic present) would be a reasonably simple puzzle for a computer programme to solve, and that instead of figuring out the next step I should instead write a program to do the work for me. Three days, a couple of very late nights and ~500 lines of Python later I had solved the inital puzzle (both via the old-school & digital approaches), but not _every_ conceivable puzzle, at least for 5 x 5 options. I then got distracted by discovering 7 x 7 Futoshikis :sweat_smile: which kept me occupied for a while, until returning to this code to solve those too.
+On a bored August afternoon in 2019 I attempted the logic games in the Times, and became stuck on a particular Futoshiki puzzle. I decided that the task of a Futoshiki (namely to order the numbers 1-5 in each row and column fulfilling the logic present) would be a reasonably simple puzzle for a computer programme to solve, and that instead of figuring out the next step I should instead write a program to do the work for me. Three days, a couple of very late nights and ~500 lines of Python later I had solved the initial puzzle (both via the old-school & digital approaches), but not _every_ conceivable puzzle, at least for 5 x 5 options. I then got distracted by discovering 7 x 7 Futoshikis :sweat_smile: which kept me occupied for a while, until returning to this code to solve those too.
 
 I'm sure there are simpler ways to go about the task, both with neater code and a cleaner algorithm, however I attempted this with no references & purely for fun.
 
-**EDIT**: Solving Futoshikis (or any Latin Square puzzle) has been chategorized as NP-complete, thus the methods I detail here are strictly for futoshiki puzzles. 
+**EDIT**: Solving Futoshikis (or any Latin Square puzzle) has been categorized as NP-complete, thus the methods I detail here are strictly for futoshiki puzzles.
 
 ## Code Structure
 
@@ -45,7 +45,7 @@ As a task in proper Python structuring, I decided to re-write my code to be obje
 ### Puzzle Generation
 Having a Puzzle class allowed a simple addition to create a puzzle generator, which automatically generates a random set of logic & attempts to solve it. If the program can solve a puzzle using its algorithms it returns the puzzle for a user to try. If the program cannot, it generates a new set of logic and tries again. If we create more complex solution algorithms then the generated puzzles will in turn become more complex. Since the current algorithms are ones that I think are easily understandable, the generated puzzles are not too complex. One issue at the moment is that starting to brute force puzzles from the minimum possibility cells leads to 'solvable' puzzles where some of the logic has already been used and those numbers filled in.
 
-A very useful improvement to the current program would be in the brute forcing algorithm. Currently the algorithm 'guesses' as few numbers as possible and uses its algorithms to try and solve after that. This means that possible values are always selected from a valid list, however occasionally it also results in situations where there are no possible values for a certain cell (raising a KeyError). An improved algorithm would handle these exceptions to infer whether the last attempted value for a cell can therefore be ignored as incorrect, however currently the next value is simply attempted. Running the solution algorithms on 9x9 grids or any complex puzzles each time a new value is guessed results in slow operation which must be able to be sped up. At one point I considered whether multithreading the application might be the solution (for example brute forcing different cells in different threads) but I think changing the algorithm itself will lead to the best solution. 
+A very useful improvement to the current program would be in the brute forcing algorithm. Currently the algorithm 'guesses' as few numbers as possible and uses its algorithms to try and solve after that. This means that possible values are always selected from a valid list, however occasionally it also results in situations where there are no possible values for a certain cell (raising a KeyError). An improved algorithm would handle these exceptions to infer whether the last attempted value for a cell can therefore be ignored as incorrect, however currently the next value is simply attempted. Running the solution algorithms on 9x9 grids or any complex puzzles each time a new value is guessed results in slow operation which must be able to be sped up. At one point I considered whether multithreading the application might be the solution (for example brute forcing different cells in different threads) but I think changing the algorithm itself will lead to the best solution.
 
 
 # ToDo
@@ -58,4 +58,3 @@ A very useful improvement to the current program would be in the brute forcing a
 - [ ] Character Recognition for scanning in puzzles
 - [ ] Phone app
 - [ ] ML Attempt at same problem ?
-
