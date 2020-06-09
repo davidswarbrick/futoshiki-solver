@@ -1,246 +1,308 @@
 from copy import deepcopy
 from Futoshiki import FutoshikiPuzzle
 
-puzzle1 = [[0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0],
-           [0, 0, 0, 3, 0],
-           [0, 3, 0, 0, 0], ]
+puzzle1 = [
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 3, 0],
+    [0, 3, 0, 0, 0],
+]
 # '/\': u"\u2227"
 # '\/': u"\u2228"
-logic1 = [['>', '', '<', ''],
-          ['', u"\u2228", '', '', ''],
-          ['', '', '', ''],
-          ['', '', '', u"\u2227", u"\u2227"],
-          ['', '', '<', '<'],
-          ['', '', '', '', ''],
-          ['', '', '', ''],
-          ['', '', '', '', ''],
-          ['>', '', '', '']]
+logic1 = [
+    [">", "", "<", ""],
+    ["", u"\u2228", "", "", ""],
+    ["", "", "", ""],
+    ["", "", "", u"\u2227", u"\u2227"],
+    ["", "", "<", "<"],
+    ["", "", "", "", ""],
+    ["", "", "", ""],
+    ["", "", "", "", ""],
+    [">", "", "", ""],
+]
 
 
-puzzle2 = [[5, 4, 3, 2, 1],
-           [2, 5, 4, 1, 3],
-           [3, 2, 1, 5, 4],
-           [1, 3, 2, 4, 5],
-           [4, 1, 5, 3, 2], ]
+puzzle2 = [
+    [5, 4, 3, 2, 1],
+    [2, 5, 4, 1, 3],
+    [3, 2, 1, 5, 4],
+    [1, 3, 2, 4, 5],
+    [4, 1, 5, 3, 2],
+]
 
-puzzle3 = [[5, 4, 3, 2, 1],
-           [2, 5, 4, 1, 3],
-           [3, 2, 1, 5, 4],
-           [4, 3, 2, 4, 5],
-           [1, 1, 5, 3, 2], ]
+puzzle3 = [
+    [5, 4, 3, 2, 1],
+    [2, 5, 4, 1, 3],
+    [3, 2, 1, 5, 4],
+    [4, 3, 2, 4, 5],
+    [1, 1, 5, 3, 2],
+]
 # '/\': u"\u2227"
 # '\/': u"\u2228"
-logic2 = [['', '', '', ''],
-          ['', '', '', '', ''],
-          ['', '>', '', '<'],
-          [u"\u2227", '', '', '', u"\u2227"],
-          ['', '', '', '>'],
-          ['', '', '', '', ''],
-          ['', '', '', ''],
-          [u"\u2227", '', '', u"\u2228", ''],
-          ['', '', '', '>']]
-puzzle3 = [[0, 0, 0, 0, 0],
-           [0, 3, 0, 0, 0],
-           [0, 0, 0, 1, 0],
-           [0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0], ]
+logic2 = [
+    ["", "", "", ""],
+    ["", "", "", "", ""],
+    ["", ">", "", "<"],
+    [u"\u2227", "", "", "", u"\u2227"],
+    ["", "", "", ">"],
+    ["", "", "", "", ""],
+    ["", "", "", ""],
+    [u"\u2227", "", "", u"\u2228", ""],
+    ["", "", "", ">"],
+]
+puzzle3 = [
+    [0, 0, 0, 0, 0],
+    [0, 3, 0, 0, 0],
+    [0, 0, 0, 1, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+]
 
-logic3 = [['', '>', '', ''],
-          [u"\u2227", '', '', '', ''],
-          ['<', '', '', ''],
-          ['', u"\u2228", u"\u2228", '', ''],
-          ['', '', '', ''],
-          ['', '', '', '', u"\u2227"],
-          ['>', '', '', '<'],
-          [u"\u2227", '', '', '', ''],
-          ['', '', '', '']]
-puzzle4 = [[4, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0], ]
-puzzle42 = [[4, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [2, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0], ]
+logic3 = [
+    ["", ">", "", ""],
+    [u"\u2227", "", "", "", ""],
+    ["<", "", "", ""],
+    ["", u"\u2228", u"\u2228", "", ""],
+    ["", "", "", ""],
+    ["", "", "", "", u"\u2227"],
+    [">", "", "", "<"],
+    [u"\u2227", "", "", "", ""],
+    ["", "", "", ""],
+]
+puzzle4 = [
+    [4, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+]
+puzzle42 = [
+    [4, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [2, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+]
 
-logic4 = [['', '', '', ''],
-          ['', '', '', '', ''],
-          ['>', '', '', '>'],
-          ['', '', '', '', ''],
-          ['', '', '', '>'],
-          [u"\u2228", u"\u2228", '', '', ''],
-          ['', '', '', '>'],
-          [u"\u2228", u"\u2228", '', '', ''],
-          ['', '', '<', '']]
-
-
-dadpuzzle = [[0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0],
-             [2, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0], ]
-
-dadlogic = [['', '', '', ''],
-            ['', u"\u2228", '', u"\u2228", ''],
-            ['', '', '<', ''],
-            [u"\u2227", '', '', '', ''],
-            ['', '', '', ''],
-            ['', '', u"\u2228", '', u"\u2227"],
-            ['', '', '', ''],
-            ['', '', '', '', u"\u2228"],
-            ['', '>', '', '']]
-
-six_by_six = [[0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0]]
-
-six_by_six_logic = [['', '', '', '', ''],
-                    ['', '', '', '', '', ''],
-                    ['', '', '', '', ''],
-                    ['', '', '', '', '', ''],
-                    ['', '', '', '', ''],
-                    ['', '', '', '', '', ''],
-                    ['', '', '', '', ''],
-                    ['', '', '', '', '', ''],
-                    ['', '', '', '', ''],
-                    ['', '', '', '', '', ''],
-                    ['', '', '', '', '']
-                    ]
-
-six_by_six1 = [[0, 0, 0, 0, 0, 0],
-               [0, 0, 0, 0, 0, 0],
-               [0, 0, 0, 0, 0, 0],
-               [0, 0, 0, 0, 0, 0],
-               [0, 0, 0, 0, 0, 0],
-               [6, 0, 0, 2, 0, 0]]
-
-six_by_six_logic1 = [['>', '>', '', '', ''],
-                     ['', '', '', '', '', ''],
-                     ['', '', '', '>', '>'],
-                     ['∧', '∨', '∧', '', '', '∧'],
-                     ['', '>', '<', '', ''],
-                     ['', '', '', '∧', '', ''],
-                     ['', '', '', '', ''],
-                     ['', '', '', '', '∧', '∨'],
-                     ['', '', '', '>', ''],
-                     ['', '∧', '', '', '', ''],
-                     ['', '', '>', '', '']
-                     ]
-
-seven_by_seven = [[0, 0, 0, 0, 0, 0, 0],
-                  [0, 0, 0, 0, 0, 0, 0],
-                  [0, 0, 0, 0, 0, 0, 0],
-                  [0, 0, 0, 0, 0, 0, 0],
-                  [0, 0, 0, 0, 0, 0, 0],
-                  [0, 0, 0, 0, 0, 0, 0],
-                  [0, 0, 0, 0, 0, 0, 0]]
-
-seven_by_seven_logic = [['', '', '', '', '', ''],
-                        ['', '', '', '', '', '', ''],
-                        ['', '', '', '', '', ''],
-                        ['', '', '', '', '', '', ''],
-                        ['', '', '', '', '', ''],
-                        ['', '', '', '', '', '', ''],
-                        ['', '', '', '', '', ''],
-                        ['', '', '', '', '', '', ''],
-                        ['', '', '', '', '', ''],
-                        ['', '', '', '', '', '', ''],
-                        ['', '', '', '', '', ''],
-                        ['', '', '', '', '', '', ''],
-                        ['', '', '', '', '', '']
-                        ]
-
-seven_by_seven1 = [[0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 4, 0, 0],
-                   [0, 0, 0, 2, 0, 0, 0],
-                   [6, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 7, 0, 0, 0, 0],
-                   [0, 0, 4, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 6]]
-
-seven_by_seven_logic1 = [['', '', '<', '', '', ''],
-                         ['', '∨', '∧', '', '', '∨', ''],
-                         ['<', '>', '', '', '', '>'],
-                         ['', '', '', '', '', '', ''],
-                         ['', '', '', '', '', ''],
-                         ['', '', '', '', '', '', ''],
-                         ['', '', '<', '', '', ''],
-                         ['', '', '', '', '∧', '', ''],
-                         ['<', '', '', '', '<', ''],
-                         ['', '', '', '', '', '', ''],
-                         ['', '>', '', '', '', ''],
-                         ['', '', '∨', '', '', '∧', '∧'],
-                         ['', '', '', '>', '', '<']
-                         ]
+logic4 = [
+    ["", "", "", ""],
+    ["", "", "", "", ""],
+    [">", "", "", ">"],
+    ["", "", "", "", ""],
+    ["", "", "", ">"],
+    [u"\u2228", u"\u2228", "", "", ""],
+    ["", "", "", ">"],
+    [u"\u2228", u"\u2228", "", "", ""],
+    ["", "", "<", ""],
+]
 
 
-nine_by_nine = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0]
-                ]
+dadpuzzle = [
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [2, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+]
 
-nine_by_nine_logic = [['', '', '', '', '', '', '', ''],
-                      ['', '', '', '', '', '', '', '', ''],
-                      ['', '', '', '', '', '', '', ''],
-                      ['', '', '', '', '', '', '', '', ''],
-                      ['', '', '', '', '', '', '', ''],
-                      ['', '', '', '', '', '', '', '', ''],
-                      ['', '', '', '', '', '', '', ''],
-                      ['', '', '', '', '', '', '', '', ''],
-                      ['', '', '', '', '', '', '', ''],
-                      ['', '', '', '', '', '', '', '', ''],
-                      ['', '', '', '', '', '', '', ''],
-                      ['', '', '', '', '', '', '', '', ''],
-                      ['', '', '', '', '', '', '', ''],
-                      ['', '', '', '', '', '', '', '', ''],
-                      ['', '', '', '', '', '', '', ''],
-                      ['', '', '', '', '', '', '', '', ''],
-                      ['', '', '', '', '', '', '', ''],
-                      ]
+dadlogic = [
+    ["", "", "", ""],
+    ["", u"\u2228", "", u"\u2228", ""],
+    ["", "", "<", ""],
+    [u"\u2227", "", "", "", ""],
+    ["", "", "", ""],
+    ["", "", u"\u2228", "", u"\u2227"],
+    ["", "", "", ""],
+    ["", "", "", "", u"\u2228"],
+    ["", ">", "", ""],
+]
+
+six_by_six = [
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+]
+
+six_by_six_logic = [
+    ["", "", "", "", ""],
+    ["", "", "", "", "", ""],
+    ["", "", "", "", ""],
+    ["", "", "", "", "", ""],
+    ["", "", "", "", ""],
+    ["", "", "", "", "", ""],
+    ["", "", "", "", ""],
+    ["", "", "", "", "", ""],
+    ["", "", "", "", ""],
+    ["", "", "", "", "", ""],
+    ["", "", "", "", ""],
+]
+
+six_by_six1 = [
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [6, 0, 0, 2, 0, 0],
+]
+
+six_by_six_logic1 = [
+    [">", ">", "", "", ""],
+    ["", "", "", "", "", ""],
+    ["", "", "", ">", ">"],
+    ["∧", "∨", "∧", "", "", "∧"],
+    ["", ">", "<", "", ""],
+    ["", "", "", "∧", "", ""],
+    ["", "", "", "", ""],
+    ["", "", "", "", "∧", "∨"],
+    ["", "", "", ">", ""],
+    ["", "∧", "", "", "", ""],
+    ["", "", ">", "", ""],
+]
+
+seven_by_seven = [
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+]
+
+seven_by_seven_logic = [
+    ["", "", "", "", "", ""],
+    ["", "", "", "", "", "", ""],
+    ["", "", "", "", "", ""],
+    ["", "", "", "", "", "", ""],
+    ["", "", "", "", "", ""],
+    ["", "", "", "", "", "", ""],
+    ["", "", "", "", "", ""],
+    ["", "", "", "", "", "", ""],
+    ["", "", "", "", "", ""],
+    ["", "", "", "", "", "", ""],
+    ["", "", "", "", "", ""],
+    ["", "", "", "", "", "", ""],
+    ["", "", "", "", "", ""],
+]
+
+seven_by_seven1 = [
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 4, 0, 0],
+    [0, 0, 0, 2, 0, 0, 0],
+    [6, 0, 0, 0, 0, 0, 0],
+    [0, 0, 7, 0, 0, 0, 0],
+    [0, 0, 4, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 6],
+]
+
+seven_by_seven_logic1 = [
+    ["", "", "<", "", "", ""],
+    ["", "∨", "∧", "", "", "∨", ""],
+    ["<", ">", "", "", "", ">"],
+    ["", "", "", "", "", "", ""],
+    ["", "", "", "", "", ""],
+    ["", "", "", "", "", "", ""],
+    ["", "", "<", "", "", ""],
+    ["", "", "", "", "∧", "", ""],
+    ["<", "", "", "", "<", ""],
+    ["", "", "", "", "", "", ""],
+    ["", ">", "", "", "", ""],
+    ["", "", "∨", "", "", "∧", "∧"],
+    ["", "", "", ">", "", "<"],
+]
 
 
-nine_by_nine1 = [[0, 0, 0, 0, 2, 0, 0, 0, 0],
-                 [3, 0, 0, 0, 0, 8, 0, 0, 0],
-                 [0, 0, 0, 0, 7, 0, 0, 0, 0],
-                 [0, 0, 0, 3, 0, 0, 0, 0, 0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                 [7, 0, 0, 0, 0, 0, 0, 0, 0],
-                 [6, 0, 0, 0, 0, 0, 0, 0, 0],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 2]
-                 ]
+nine_by_nine = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+]
 
-nine_by_nine_logic1 = [['', '', '', '', '', '', '>', ''],
-                       ['∧', '', '∧', '', '', '∧', '∧', '', ''],
-                       ['', '', '', '', '>', '', '', ''],
-                       ['∧', '', '', '', '', '', '', '', ''],
-                       ['<', '', '<', '', '', '<', '', ''],
-                       ['', '∨', '∨', '', '', '', '', '', '∨'],
-                       ['', '', '', '', '>', '', '', ''],
-                       ['', '', '∨', '', '', '∧', '', '', ''],
-                       ['', '', '', '', '', '', '', ''],
-                       ['', '', '', '∧', '∧', '∧', '', '', '∨'],
-                       ['', '>', '', '', '', '', '>', ''],
-                       ['', '', '', '∧', '', '∧', '', '', '∨'],
-                       ['', '', '', '', '', '', '', ''],
-                       ['', '', '', '∧', '', '', '', '', ''],
-                       ['', '>', '', '<', '>', '', '', ''],
-                       ['∧', '', '∨', '', '', '', '∨', '', '∨'],
-                       ['', '', '', '', '', '', '', ''],
-                       ]
+nine_by_nine_logic = [
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+]
+
+
+nine_by_nine1 = [
+    [0, 0, 0, 0, 2, 0, 0, 0, 0],
+    [3, 0, 0, 0, 0, 8, 0, 0, 0],
+    [0, 0, 0, 0, 7, 0, 0, 0, 0],
+    [0, 0, 0, 3, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [7, 0, 0, 0, 0, 0, 0, 0, 0],
+    [6, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 2],
+]
+
+nine_by_nine_logic1 = [
+    ["", "", "", "", "", "", ">", ""],
+    ["∧", "", "∧", "", "", "∧", "∧", "", ""],
+    ["", "", "", "", ">", "", "", ""],
+    ["∧", "", "", "", "", "", "", "", ""],
+    ["<", "", "<", "", "", "<", "", ""],
+    ["", "∨", "∨", "", "", "", "", "", "∨"],
+    ["", "", "", "", ">", "", "", ""],
+    ["", "", "∨", "", "", "∧", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "∧", "∧", "∧", "", "", "∨"],
+    ["", ">", "", "", "", "", ">", ""],
+    ["", "", "", "∧", "", "∧", "", "", "∨"],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "∧", "", "", "", "", ""],
+    ["", ">", "", "<", ">", "", "", ""],
+    ["∧", "", "∨", "", "", "", "∨", "", "∨"],
+    ["", "", "", "", "", "", "", ""],
+]
+
+puzzle10 = [
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 3],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+]
+# '/\': u"\u2227"
+# '\/': u"\u2228"
+logic10 = [
+    ["", "", "", ""],
+    ["", "", "", "", ""],
+    ["", "", ">", "<"],
+    ["", "", "", u"\u2228", ""],
+    [">", "", "<", ""],
+    ["", "", "", u"\u2227", ""],
+    ["", "", ">", ""],
+    ["", "", "", "", ""],
+    ["<", "", "<", ""],
+]
+
 
 ############################
 # Functional Below this line
@@ -261,7 +323,7 @@ def empty_array_returner(puzzle_size, item_size, contents):
                         item.append(contents)
                     elif contents == "range":
                         # print("Returning range using dimension sizes to infer length")
-                        item.append(k+1)
+                        item.append(k + 1)
             line.append(item)
         e.append(line)
     return e
@@ -269,18 +331,18 @@ def empty_array_returner(puzzle_size, item_size, contents):
 
 def puzzle_printer(puzzle, logic):
     for i, l_line in enumerate(logic):
-        if (i+1) % 2:  # number lines
-            line = ''
-            for j in range(len(puzzle[0])-1):
-                line += '{n}{l:1}'.format(n=puzzle[i//2][j], l=l_line[j])
-            line += '{}'.format(puzzle[i//2][-1])
+        if (i + 1) % 2:  # number lines
+            line = ""
+            for j in range(len(puzzle[0]) - 1):
+                line += "{n}{l:1}".format(n=puzzle[i // 2][j], l=l_line[j])
+            line += "{}".format(puzzle[i // 2][-1])
             print(line)
 
         else:  # logic lines
-            line = ''
-            for l in range(len(l_line)-1):
-                line += '{:1} '.format(l_line[l])
-            line += '{}'.format(l_line[-1])
+            line = ""
+            for l in range(len(l_line) - 1):
+                line += "{:1} ".format(l_line[l])
+            line += "{}".format(l_line[-1])
             print(line)
 
 
@@ -293,50 +355,50 @@ def logic_finder(logic):
             # Finding logic to test this cell against
             try:
                 # right
-                logic_matrix[j][i][0] = logic[j*2][i]
+                logic_matrix[j][i][0] = logic[j * 2][i]
             except IndexError:
                 logic_matrix[j][i][0] = None
             try:
                 # below
-                logic_matrix[j][i][1] = logic[(j*2)+1][i]
+                logic_matrix[j][i][1] = logic[(j * 2) + 1][i]
             except IndexError:
                 logic_matrix[j][i][1] = None
 
             try:
                 # left
-                if i-1 < 0:
+                if i - 1 < 0:
                     logic_matrix[j][i][2] = None
                 else:
-                    logic_matrix[j][i][2] = logic[j*2][i-1]
+                    logic_matrix[j][i][2] = logic[j * 2][i - 1]
             except IndexError:
                 logic_matrix[j][i][2] = None
             try:
                 # above
-                if (j*2)-1 < 0:
+                if (j * 2) - 1 < 0:
                     logic_matrix[j][i][3] = None
                 else:
-                    logic_matrix[j][i][3] = logic[(j*2)-1][i]
+                    logic_matrix[j][i][3] = logic[(j * 2) - 1][i]
             except IndexError:
                 logic_matrix[j][i][3] = None
     return logic_matrix
 
 
 def get_neighbours(puzzle, j, i):
-    neighbours = [None]*4
+    neighbours = [None] * 4
     try:
-        neighbours[0] = puzzle[j][i+1]
+        neighbours[0] = puzzle[j][i + 1]
     except IndexError:
         pass
     try:
-        neighbours[1] = puzzle[j+1][i]
+        neighbours[1] = puzzle[j + 1][i]
     except IndexError:
         pass
     try:
-        neighbours[2] = puzzle[j][i-1]
+        neighbours[2] = puzzle[j][i - 1]
     except IndexError:
         pass
     try:
-        neighbours[3] = puzzle[j-1][i]
+        neighbours[3] = puzzle[j - 1][i]
     except IndexError:
         pass
 
@@ -346,43 +408,61 @@ def get_neighbours(puzzle, j, i):
 def single_cell_tester(cell_number, neighbours, nearby_logic, only_check_two=False):
     # "Only check two" allows for the fact that checking only right and down for all squares will be equally valid and quicker.
     result = True
-    if nearby_logic[0] == '>' and neighbours[0] is not None:
+    if nearby_logic[0] == ">" and neighbours[0] is not None:
         result = result & (cell_number > neighbours[0])
     if nearby_logic[1] == u"\u2228" and neighbours[1] is not None:
         result = result & (cell_number > neighbours[1])
-    if nearby_logic[2] == '<' and neighbours[2] is not None and not only_check_two:
+    if nearby_logic[2] == "<" and neighbours[2] is not None and not only_check_two:
         result = result & (cell_number > neighbours[2])
-    if nearby_logic[3] == u"\u2227"and neighbours[3] is not None and not only_check_two:
+    if (
+        nearby_logic[3] == u"\u2227"
+        and neighbours[3] is not None
+        and not only_check_two
+    ):
         result = result & (cell_number > neighbours[3])
 
-    if nearby_logic[0] == '<'and neighbours[0] is not None and neighbours[0] != 0:
+    if nearby_logic[0] == "<" and neighbours[0] is not None and neighbours[0] != 0:
         result = result & (cell_number < neighbours[0])
-    if nearby_logic[1] == u"\u2227" and neighbours[1] is not None and neighbours[1] != 0:
+    if (
+        nearby_logic[1] == u"\u2227"
+        and neighbours[1] is not None
+        and neighbours[1] != 0
+    ):
         result = result & (cell_number < neighbours[1])
-    if nearby_logic[2] == '>' and neighbours[2] is not None and neighbours[2] != 0 and not only_check_two:
+    if (
+        nearby_logic[2] == ">"
+        and neighbours[2] is not None
+        and neighbours[2] != 0
+        and not only_check_two
+    ):
         result = result & (cell_number < neighbours[2])
-    if nearby_logic[3] == u"\u2228" and neighbours[3] is not None and neighbours[3] != 0 and not only_check_two:
+    if (
+        nearby_logic[3] == u"\u2228"
+        and neighbours[3] is not None
+        and neighbours[3] != 0
+        and not only_check_two
+    ):
         result = result & (cell_number < neighbours[3])
 
     return result
 
 
 def get_possible_neighbours(p, j, i, index=0):
-    neighbours = [None]*4
+    neighbours = [None] * 4
     try:
-        neighbours[0] = p[j][i+1][index]
+        neighbours[0] = p[j][i + 1][index]
     except IndexError:
         pass
     try:
-        neighbours[1] = p[j+1][i][index]
+        neighbours[1] = p[j + 1][i][index]
     except IndexError:
         pass
     try:
-        neighbours[2] = p[j][i-1][index]
+        neighbours[2] = p[j][i - 1][index]
     except IndexError:
         pass
     try:
-        neighbours[3] = p[j-1][i][index]
+        neighbours[3] = p[j - 1][i][index]
     except IndexError:
         pass
 
@@ -399,23 +479,29 @@ def valid(puzzle, logic):
         for i, n in enumerate(line):
             if n == 0:
                 # any zeroes mean not completed puzzle
-                print('Not Complete (Zeroes Present) Checking Logic')
+                print("Not Complete (Zeroes Present) Checking Logic")
                 zero_flag = True
             else:
                 # Applying the tests to the cell
                 cell_valid = single_cell_tester(
-                    cell_number=puzzle[j][i], neighbours=get_neighbours(puzzle, j, i), nearby_logic=tests_to_be_performed[j][i], only_check_two=True)
+                    cell_number=puzzle[j][i],
+                    neighbours=get_neighbours(puzzle, j, i),
+                    nearby_logic=tests_to_be_performed[j][i],
+                    only_check_two=True,
+                )
             if not cell_valid:
-                print('Logic Failure caused by cell: {},{} (line, index)'.format(j, i))
+                print("Logic Failure caused by cell: {},{} (line, index)".format(j, i))
                 logic_failures.append((j, i))
                 all_cells_valid = False
         l = line.copy()
         l.sort()
         # Check the line sorted is the same as an array of 1->size of puzzle
-        if l != [k+1 for k in range(len(puzzle[0]))]:
+        if l != [k + 1 for k in range(len(puzzle[0]))]:
             print(
                 "The line {} does not have solely the numbers 1-{} (inclusive), therefore is invalid".format(
-                    puzzle.index(line), len(puzzle[0])))
+                    puzzle.index(line), len(puzzle[0])
+                )
+            )
             all_lines_filled = False
 
     return (all_cells_valid, all_lines_filled, zero_flag), logic_failures
@@ -426,34 +512,34 @@ def recursive_more_than(logic_matrix, p, j, i):
     # print("Currently in {},{}".format(j, i))
     # CHECK WHETHER RECURSION COULD BE MOVED UP
     # next cell is less than current cell
-    if nearby_logic[0] == '>':
+    if nearby_logic[0] == ">":
         try:
-            p[j][i] = [x for x in p[j][i] if x > min(p[j][i+1])]
+            p[j][i] = [x for x in p[j][i] if x > min(p[j][i + 1])]
         except ValueError:
             pass
-        recursive_more_than(logic_matrix, p, j, i+1)
+        recursive_more_than(logic_matrix, p, j, i + 1)
 
     if nearby_logic[1] == u"\u2228":
         try:
             # p[j][i].remove((min(p[j+1][i])))
-            p[j][i] = [x for x in p[j][i] if x > min(p[j+1][i])]
+            p[j][i] = [x for x in p[j][i] if x > min(p[j + 1][i])]
         except ValueError:
             pass
-        recursive_more_than(logic_matrix, p, j+1, i)
-    if nearby_logic[2] == '<':
+        recursive_more_than(logic_matrix, p, j + 1, i)
+    if nearby_logic[2] == "<":
         try:
             # p[j][i].remove((min(p[j][i-1])))
-            p[j][i] = [x for x in p[j][i] if x > min(p[j][i-1])]
+            p[j][i] = [x for x in p[j][i] if x > min(p[j][i - 1])]
         except ValueError:
             pass
-        recursive_more_than(logic_matrix, p, j, i-1)
+        recursive_more_than(logic_matrix, p, j, i - 1)
     if nearby_logic[3] == u"\u2227":
         try:
             # p[j][i].remove((min(p[j-1][i])))
-            p[j][i] = [x for x in p[j][i] if x > min(p[j-1][i])]
+            p[j][i] = [x for x in p[j][i] if x > min(p[j - 1][i])]
         except ValueError:
             pass
-        recursive_more_than(logic_matrix, p, j-1, i)
+        recursive_more_than(logic_matrix, p, j - 1, i)
     return p
 
 
@@ -461,31 +547,31 @@ def recursive_less_than(logic_matrix, p, j, i):
     nearby_logic = logic_matrix[j][i]
     # print("Currently in {},{}".format(j, i))
     # next cell is greater than current cell
-    if nearby_logic[0] == '<':
+    if nearby_logic[0] == "<":
         try:
-            p[j][i] = [x for x in p[j][i] if x < max(p[j][i+1])]
+            p[j][i] = [x for x in p[j][i] if x < max(p[j][i + 1])]
         except ValueError:
             pass
-        recursive_less_than(logic_matrix, p, j, i+1)
+        recursive_less_than(logic_matrix, p, j, i + 1)
 
     if nearby_logic[1] == u"\u2227":
         try:
-            p[j][i] = [x for x in p[j][i] if x < max(p[j+1][i])]
+            p[j][i] = [x for x in p[j][i] if x < max(p[j + 1][i])]
         except ValueError:
             pass
-        recursive_less_than(logic_matrix, p, j+1, i)
-    if nearby_logic[2] == '>':
+        recursive_less_than(logic_matrix, p, j + 1, i)
+    if nearby_logic[2] == ">":
         try:
-            p[j][i] = [x for x in p[j][i] if x < max(p[j][i-1])]
+            p[j][i] = [x for x in p[j][i] if x < max(p[j][i - 1])]
         except ValueError:
             pass
-        recursive_less_than(logic_matrix, p, j, i-1)
+        recursive_less_than(logic_matrix, p, j, i - 1)
     if nearby_logic[3] == u"\u2228":
         try:
-            p[j][i] = [x for x in p[j][i] if x < max(p[j-1][i])]
+            p[j][i] = [x for x in p[j][i] if x < max(p[j - 1][i])]
         except ValueError:
             pass
-        recursive_less_than(logic_matrix, p, j-1, i)
+        recursive_less_than(logic_matrix, p, j - 1, i)
     return p
 
 
@@ -506,7 +592,9 @@ def line_match(row, match_list):
         rest_of_row = list(filter(lambda a: a != match_list, deepcopy(row)))
         third_values_attempted = []
         for item in rest_of_row:
-            if len(item) == 3 and all(x in item for x in match_list):  # all of the match list is contained
+            if len(item) == 3 and all(
+                x in item for x in match_list
+            ):  # all of the match list is contained
 
                 ic = [x for x in deepcopy(item) if x not in match_list]
                 # ic.remove(match_list[0])
@@ -520,17 +608,21 @@ def line_match(row, match_list):
                     new_match_value.append(ic[0])
                     new_match_value.sort()
 
-                    new_row_matches = [index for index,
-                                       val in enumerate(row) if (val == new_match_value) or (val == match_list)]
+                    new_row_matches = [
+                        index
+                        for index, val in enumerate(row)
+                        if (val == new_match_value) or (val == match_list)
+                    ]
 
                     if len(new_row_matches) == 3:
                         # print("Partial matching match_list: {} extended to: {} for \nrow: {}".format(
-                            # match_list, new_match_value, row))
+                        # match_list, new_match_value, row))
 
                         # print("Found {} matches, removing {} from row ".format(
-                            # len(new_row_matches), new_match_value))
-                        non_matched_row_indices = [x for x in range(
-                            len(row)) if x not in new_row_matches]
+                        # len(new_row_matches), new_match_value))
+                        non_matched_row_indices = [
+                            x for x in range(len(row)) if x not in new_row_matches
+                        ]
                         for index in non_matched_row_indices:
                             for num in new_match_value:
                                 try:
@@ -595,26 +687,33 @@ def corner_rule(logic_matrix, pc, j, i):
             return pc
         else:
             i1, i2 = row_matches[0], row_matches[1]
-            if ((logic_matrix[j][i1][1] == u"\u2227" and logic_matrix[j][i2][3] == u"\u2228") and pc[j+1][i1] == pc[j-1][i2]):
+            if (
+                logic_matrix[j][i1][1] == u"\u2227"
+                and logic_matrix[j][i2][3] == u"\u2228"
+            ) and pc[j + 1][i1] == pc[j - 1][i2]:
                 # print("Both pairs less than same pair - applying corner rule 1")
-                num_to_remove = max(pc[j+1][i1])
+                num_to_remove = max(pc[j + 1][i1])
                 try:
-                    pc[j+1][i2].remove(num_to_remove)
+                    pc[j + 1][i2].remove(num_to_remove)
                 except ValueError:
                     pass
                 try:
-                    pc[j-1][i1].remove(num_to_remove)
+                    pc[j - 1][i1].remove(num_to_remove)
                 except ValueError:
                     pass
-            if (logic_matrix[j][i1][3] == u"\u2228" and logic_matrix[j][i2][1] == u"\u2227" and pc[j-1][i1] == pc[j+1][i2]):
+            if (
+                logic_matrix[j][i1][3] == u"\u2228"
+                and logic_matrix[j][i2][1] == u"\u2227"
+                and pc[j - 1][i1] == pc[j + 1][i2]
+            ):
                 # print("Both pairs less than same pair - applying corner rule 2")
-                num_to_remove = max(pc[j-1][i1])
+                num_to_remove = max(pc[j - 1][i1])
                 try:
-                    pc[j+1][i1].remove(num_to_remove)
+                    pc[j + 1][i1].remove(num_to_remove)
                 except ValueError:
                     pass
                 try:
-                    pc[j-1][i2].remove(num_to_remove)
+                    pc[j - 1][i2].remove(num_to_remove)
                 except ValueError:
                     pass
 
@@ -671,7 +770,7 @@ def brute_force(puzzle, logic, p):
     # Box lookup is a dictionary of box locations, indexed by number of possible values for each location
     box_lookup = {}
     # We want boxes with two values, up to boxes with any possible value (ie size of puzzle)
-    for m in range(2, len(p[0])+1):
+    for m in range(2, len(p[0]) + 1):
         box_lookup[m] = []
 
     for j in range(len(new_puzzle[0])):
@@ -682,7 +781,7 @@ def brute_force(puzzle, logic, p):
                 box_lookup[len(new_p[j][i])].append((j, i))
     # print(box_lookup)
     solved = False
-    for m in range(2, len(p[0])+1):
+    for m in range(2, len(p[0]) + 1):
         for box in box_lookup[m]:
             print("Attempting brute force at cell {},{}".format(box[0], box[1]))
             for index in range(len(new_p[box[0]][box[1]])):
@@ -726,7 +825,7 @@ def sol_print(p):
 
 
 def consistent_past_values(puzzle, logic):
-    p = empty_array_returner(len(puzzle[0]), len(puzzle[0]), 'range')
+    p = empty_array_returner(len(puzzle[0]), len(puzzle[0]), "range")
     p_prev = None
     t = 0
 
@@ -779,24 +878,26 @@ def solve(puzzle, logic, brute_force_if_needed=False):
 #     print(x)
 # solve(puzzle1, logic1)
 
-p2 = FutoshikiPuzzle(nine_by_nine1, nine_by_nine_logic1)
-p2.solve()
-# p2.brute_force(1)
-# solve(puzzle1, logic1)
+p = FutoshikiPuzzle(puzzle10, logic10)
+p.solve()
+# p2 = FutoshikiPuzzle(nine_by_nine1, nine_by_nine_logic1)
+# p2.solve()
+# # p2.brute_force(1)
+# # solve(puzzle1, logic1)
+# #
+# # solve(puzzle3, logic3)
+# #
+# # solve(puzzle4, logic4)
+# # solve(dadpuzzle, dadlogic)
+# # puzzle_printer(six_by_six1, six_by_six_logic1)
+# p1 = FutoshikiPuzzle(six_by_six1, six_by_six_logic1)
+# p1.solve()
+# if not p1.solved:
+#     p1.brute_force(1)
 #
-# solve(puzzle3, logic3)
-#
-# solve(puzzle4, logic4)
-# solve(dadpuzzle, dadlogic)
-# puzzle_printer(six_by_six1, six_by_six_logic1)
-p1 = FutoshikiPuzzle(six_by_six1, six_by_six_logic1)
-p1.solve()
-if not p1.solved:
-    p1.brute_force(1)
-
-p3 = FutoshikiPuzzle(seven_by_seven1, seven_by_seven_logic1)
-p3.solve()
-if not p3.solved:
-    p3.brute_force(1)
+# p3 = FutoshikiPuzzle(seven_by_seven1, seven_by_seven_logic1)
+# p3.solve()
+# if not p3.solved:
+#     p3.brute_force(1)
 # solve(seven_by_seven1, seven_by_seven_logic1)
 # solve(nine_by_nine1, nine_by_nine_logic1, brute_force_if_needed=True)
