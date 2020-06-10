@@ -58,13 +58,99 @@ def contour_and_plot(img):
     plt.imshow(drawncont, "gray")
 
 
-# houghlines_and_plot(imgs[0])
+# https://docs.opencv2.org/master/d7/dff/tutorial_feature_homography.html
 
-for j in range(3):
-    contour_and_plot(imgs[j])
-
-
-# https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_feature2d/py_feature_homography/py_feature_homography.html#feature-homography
+puzzle3712 = cv2.imread("img/3712crop.jpg".format(i), 0)
+scene_imgs = imgs[0:3]
 
 
+# -- Step 1: Detect the keypoints using SURF Detector, compute the descriptors
+detector = cv2.xfeatures2d_SURF.create(hessianThreshold=400)
+keypoints_obj, descriptors_obj = detector.detectAndCompute(puzzle3712, None)
+keypoints_scene, descriptors_scene = detector.detectAndCompute(scene_imgs[0], None)
+
+# -- Step 2: Matching descriptor vectors with a FLANN based matcher
+# Since SURF is a floating-point descriptor NORM_L2 is used
+matcher = cv2.DescriptorMatcher_create(cv2.DescriptorMatcher_FLANNBASED)
+knn_matches = matcher.knnMatch(descriptors_obj, descriptors_scene, 2)
+
+# -- Filter matches using the Lowe's ratio test
+ratio_thresh = 0.75
+good_matches = []
+for m, n in knn_matches:
+    if m.distance < ratio_thresh * n.distance:
+        good_matches.append(m)
+# -- Draw matches
+img_matches = np.empty(
+    (
+        max(puzzle3712.shape[0], scene_imgs[0].shape[0]),
+        puzzle3712.shape[1] + scene_imgs[0].shape[1],
+        3,
+    ),
+    dtype=np.uint8,
+)
+cv2.drawMatches(
+    puzzle3712,
+    keypoints_obj,
+    scene_imgs[0],
+    keypoints_scene,
+    good_matches,
+    img_matches,
+    flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS,
+)
+
+# -- Localize the object
+obj = np.empty((len(good_matches), 2), dtype=np.float32)
+scene = np.empty((len(good_matches), 2), dtype=np.float32)
+for i in range(len(good_matches)):
+    # -- Get the keypoints from the good matches
+    obj[i, 0] = keypoints_obj[good_matches[i].queryIdx].pt[0]
+    obj[i, 1] = keypoints_obj[good_matches[i].queryIdx].pt[1]
+    scene[i, 0] = keypoints_scene[good_matches[i].trainIdx].pt[0]
+    scene[i, 1] = keypoints_scene[good_matches[i].trainIdx].pt[1]
+H, _ = cv2.findHomography(obj, scene, cv2.RANSAC)
+# -- Get the corners from the image_1 ( the object to be "detected" )
+obj_corners = np.empty((4, 1, 2), dtype=np.float32)
+obj_corners[0, 0, 0] = 0
+obj_corners[0, 0, 1] = 0
+obj_corners[1, 0, 0] = puzzle3712.shape[1]
+obj_corners[1, 0, 1] = 0
+obj_corners[2, 0, 0] = puzzle3712.shape[1]
+obj_corners[2, 0, 1] = puzzle3712.shape[0]
+obj_corners[3, 0, 0] = 0
+obj_corners[3, 0, 1] = puzzle3712.shape[0]
+scene_corners = cv2.perspectiveTransform(obj_corners, H)
+# -- Draw lines between the corners (the mapped object in the scene - image_2 )
+cv2.line(
+    img_matches,
+    (int(scene_corners[0, 0, 0] + puzzle3712.shape[1]), int(scene_corners[0, 0, 1])),
+    (int(scene_corners[1, 0, 0] + puzzle3712.shape[1]), int(scene_corners[1, 0, 1])),
+    (0, 255, 0),
+    4,
+)
+cv2.line(
+    img_matches,
+    (int(scene_corners[1, 0, 0] + puzzle3712.shape[1]), int(scene_corners[1, 0, 1])),
+    (int(scene_corners[2, 0, 0] + puzzle3712.shape[1]), int(scene_corners[2, 0, 1])),
+    (0, 255, 0),
+    4,
+)
+cv2.line(
+    img_matches,
+    (int(scene_corners[2, 0, 0] + puzzle3712.shape[1]), int(scene_corners[2, 0, 1])),
+    (int(scene_corners[3, 0, 0] + puzzle3712.shape[1]), int(scene_corners[3, 0, 1])),
+    (0, 255, 0),
+    4,
+)
+cv2.line(
+    img_matches,
+    (int(scene_corners[3, 0, 0] + puzzle3712.shape[1]), int(scene_corners[3, 0, 1])),
+    (int(scene_corners[0, 0, 0] + puzzle3712.shape[1]), int(scene_corners[0, 0, 1])),
+    (0, 255, 0),
+    4,
+)
+# -- Show detected matches
+# cv2.imshow("Good Matches & Object detection", img_matches)
+plt.figure()
+plt.imshow(img_matches)
 plt.show()
