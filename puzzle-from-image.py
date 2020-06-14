@@ -64,10 +64,11 @@ puzzle3712 = cv2.imread("img/3712crop.jpg".format(i), 0)
 scene_imgs = imgs[0:3]
 
 
-# -- Step 1: Detect the keypoints using SURF Detector, compute the descriptors
-detector = cv2.xfeatures2d_SURF.create(hessianThreshold=400)
+# -- Step 1: Detect the keypoints using SIFT Detector, compute the descriptors
+# detector = cv2.xfeatures2d_SURF.create(hessianThreshold=400)
+detector = cv2.xfeatures2d_SIFT.create()
 keypoints_obj, descriptors_obj = detector.detectAndCompute(puzzle3712, None)
-keypoints_scene, descriptors_scene = detector.detectAndCompute(scene_imgs[0], None)
+keypoints_scene, descriptors_scene = detector.detectAndCompute(scene_imgs[1], None)
 
 # -- Step 2: Matching descriptor vectors with a FLANN based matcher
 # Since SURF is a floating-point descriptor NORM_L2 is used
@@ -75,7 +76,7 @@ matcher = cv2.DescriptorMatcher_create(cv2.DescriptorMatcher_FLANNBASED)
 knn_matches = matcher.knnMatch(descriptors_obj, descriptors_scene, 2)
 
 # -- Filter matches using the Lowe's ratio test
-ratio_thresh = 0.75
+ratio_thresh = 0.4
 good_matches = []
 for m, n in knn_matches:
     if m.distance < ratio_thresh * n.distance:
@@ -83,8 +84,8 @@ for m, n in knn_matches:
 # -- Draw matches
 img_matches = np.empty(
     (
-        max(puzzle3712.shape[0], scene_imgs[0].shape[0]),
-        puzzle3712.shape[1] + scene_imgs[0].shape[1],
+        max(puzzle3712.shape[0], scene_imgs[1].shape[0]),
+        puzzle3712.shape[1] + scene_imgs[1].shape[1],
         3,
     ),
     dtype=np.uint8,
@@ -92,7 +93,7 @@ img_matches = np.empty(
 cv2.drawMatches(
     puzzle3712,
     keypoints_obj,
-    scene_imgs[0],
+    scene_imgs[1],
     keypoints_scene,
     good_matches,
     img_matches,
@@ -153,4 +154,9 @@ cv2.line(
 # cv2.imshow("Good Matches & Object detection", img_matches)
 plt.figure()
 plt.imshow(img_matches)
+
+contour_and_plot(imgs[2])
+plt.figure()
+plt.imshow(cv2.cornerHarris(imgs[2].copy(), blockSize=5, ksize=3, k=0), "gray")
+
 plt.show()
