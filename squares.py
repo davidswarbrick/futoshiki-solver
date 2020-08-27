@@ -5,51 +5,131 @@ import itertools
 import collections
 from copy import deepcopy
 
-# Square detector copied from C++ source code here: https://docs.opencv.org/master/db/d00/samples_2cpp_2squares_8cpp-example.html
+# Square detector copied from C++ source code here:
+# https://docs.opencv.org/master/db/d00/samples_2cpp_2squares_8cpp-example.html
 
 
 class Square:
     def __init__(self, corners):
         # unpack corner array into a single 2D numpy array for ease of use.
         self.corners = np.array([x[0] for x in corners])
+        self.in_grid = False
+        self.value = None
+        self.possible_values = [1, 2, 3, 4, 5]
 
     def __repr__(self):
         return str(self.area)
 
     @property
-    def reconstructed(self):
-        return np.array([[x] for x in self.corners])
-
-    @property
     def area(self):
         return cv2.contourArea(self.corners)
 
+    @property
+    def centre(self):
+        return np.array(
+            [np.mean(self.corners[:, 0]).round(), np.mean(self.corners[:, 1]).round(),]
+        )
+
+    @staticmethod
+    def relative_area_increase(sq1, sq2):
+        big = max(sq1.area, sq2.area)
+        small = min(sq1.area, sq2.area)
+        return big / small
+
+    @staticmethod
+    def are_duplicates(sq1, sq2):
+        """Check two squares are similar by their centre location and area change.
+        """
+        dist = np.linalg.norm(sq1.centre - sq2.centre)
+        return dist < 10 and (Square.relative_area_increase(sq1, sq2)) < 2
+
+    @staticmethod
+    def points_form_a_square(approx):
+        """Check the 4 points in the approximate contour form a rectangle
+        This is completed by checking the cosine of each corner angle
+        """
+        max_cosine = 0
+        side_length_approx_same = False
+        for j in range(2, 5):
+            a = approx[j % 4]
+            b = approx[j - 2]
+            c = approx[j - 1]
+            length_1 = np.linalg.norm(a - c)
+            length_2 = np.linalg.norm(b - c)
+            v_1 = (a - c) / length_1
+            v_2 = (b - c) / length_2
+            cosine = np.dot(v_1[0], v_2[0])
+            max_cosine = np.amax([cosine, max_cosine])
+            side_length_approx_same = (
+                abs(length_2 - length_1) / min(length_1, length_2) < 0.5
+            )
+        return max_cosine < 0.3 and side_length_approx_same
+
     def draw_square(self, img):
-        return cv2.polylines(img, self.reconstructed, True, (255, 0, 0), 5)
+        return cv2.polylines(img, [self.corners], True, (255, 0, 0), 5)
 
 
 class SquareList(collections.UserList):
     @property
     def all_corners(self):
-        # Corners are stored as [ [[x0 y0]] [[x1 y1]] ...]
-        # so we do two chain.from_iterable steps to unpack them.
-        # ToDo: Would be better to do this in Square constructor
-        a = list(itertools.chain.from_iterable(s.corners for s in self.data))
+        return list(itertools.chain.from_iterable(s.corners for s in self.data))
 
-        return a
+    @property
+    def all_areas(self):
+        return [x.area for x in self.data]
 
-    def sort_by_area(self):
-        self.data.sort(key=lambda x: x.area)
+    @property
+    def distances_to_closest_neighbour(self):
+        distances = []
+        for square in self.data:
+            closest_squares = self.sort_by_dist(square.centre)
+            # position 0 will be this square
+            distances.append(np.linalg.norm(closest_squares[1].centre - square.centre))
+        return distances
 
-    def remove_close_squares(self):
-        """ToDo: implement a function to remove all nearby squares
-        (caused by edge detector getting things wrong)."""
-        # Construct a list of the first corner of each square, check on these points.
-        first_corners = list(
-            itertools.chain.from_iterable(s.corners[0] for s in self.data)
+    def sort_by_area(self, reverse=False):
+        self.data.sort(key=lambda x: x.area, reverse=reverse)
+
+    def sort_by_dist(self, centre, reverse=False):
+        return sorted(
+            self.data, key=lambda x: np.linalg.norm(x.centre - centre), reverse=reverse
         )
 
-        return first_corners
+    def remove_duplicate_squares(self):
+        """A function to remove duplicate nearby squares
+        (caused by edge detector getting things wrong)."""
+        # Sort from smallest to largest so we keep the inside of edge-detected squares.
+        self.sort_by_area(reverse=False)
+        duplicate_indices = []
+        for index in range(len(self.data)):
+            try:
+                sq = self.data[index]
+                rest_of_list = self.data[index + 1 :]
+            except IndexError:
+                pass
+            for i, smaller_square in enumerate(rest_of_list):
+                if Square.are_duplicates(sq, smaller_square):
+                    duplicate_indices.append(i + index + 1)
+        duplicate_indices = list(set(duplicate_indices))
+        for index in sorted(duplicate_indices, reverse=True):
+            del self.data[index]
+        return
+
+    def remove_squares_mismatched_neighbours(self):
+        non_puzzle_square_indices = []
+        # mean_dist = np.mean(self.distances_to_closest_neighbour)
+        for index, square in enumerate(self.data):
+            closest_squares = self.sort_by_dist(square.centre)
+            all_neighbours_similar_size = True
+            for j in range(5):
+                all_neighbours_similar_size = all_neighbours_similar_size and (
+                    Square.relative_area_increase(square, closest_squares[j]) < 2.5
+                )
+            if not all_neighbours_similar_size:
+                non_puzzle_square_indices.append(index)
+        non_puzzle_square_indices = list(set(non_puzzle_square_indices))
+        for index in sorted(non_puzzle_square_indices, reverse=True):
+            del self.data[index]
 
     def draw_all(self, img):
         # ToDo: check if deepcopy needed/is it possible to draw without changing image
@@ -57,23 +137,6 @@ class SquareList(collections.UserList):
         for s in self.data:
             p = s.draw_square(p)
         return p
-
-
-def is_square(approx):
-    """
-    Check the 4 points in the approximate contour form a rectangle
-    This is completed checking the cosine of each corner angle
-    """
-    max_cosine = 0
-    for j in range(2, 5):
-        a = approx[j % 4]
-        b = approx[j - 2]
-        c = approx[j - 1]
-        v_1 = (a - c) / np.linalg.norm(a - c)
-        v_2 = (b - c) / np.linalg.norm(b - c)
-        cosine = np.dot(v_1[0], v_2[0])
-        max_cosine = np.amax([cosine, max_cosine])
-    return max_cosine < 0.3
 
 
 def find_squares(img, thresh=50, ratio=2.5):
@@ -95,13 +158,10 @@ def find_squares(img, thresh=50, ratio=2.5):
             len(approx) == 4
             # and cv2.contourArea(approx) > 1000
             and cv2.isContourConvex(approx)
-            and is_square(approx)
+            and Square.points_form_a_square(approx)
         ):
             # found a square
             sl.append(Square(approx))
-    # if squares_found:
-    #    plt.figure()
-    #    plt.imshow(gray, "gray")
 
     return sl
 
@@ -113,9 +173,10 @@ for i in range(11):
 
 # p = cv2.imread("img/3712crop.jpg",0)
 p = imgs[2]
-sl = find_squares(p)
-
-
+sl = find_squares(p, thresh=50)
+sl.remove_duplicate_squares()
+# sl.remove_squares_mismatched_neighbours()
+# print(np.mean(sl.distances_to_closest_neighbour))
 all_corners = sl.all_corners
 clear_img = np.zeros(p.shape)
 
