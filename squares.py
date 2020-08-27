@@ -171,26 +171,19 @@ imgs = []
 for i in range(11):
     img = cv2.imread("img/{}.jpg".format(i), 0)
     imgs.append(img)
-
-# p = cv2.imread("img/3712crop.jpg",0)
-p = imgs[4]
-sl = find_squares(p, thresh=50)
-sl.remove_duplicate_squares()
-sl.remove_squares_mismatched_neighbours()
-all_corners = sl.all_corners
-clear_img = np.zeros(p.shape)
-print(p.shape)
-for c in all_corners:
-    clear_img[c[1], c[0]] = 255
-
-
-plt.figure(0)
-plt.imshow(clear_img, "gray")
-plt.figure(1)
-plt.subplot(121)
-plt.imshow(p, "gray")
-p = sl.draw_all(p)
-plt.subplot(122)
-plt.imshow(p)
-print("Found {} squares".format(len(sl)))
+    sl = find_squares(img)
+    sl.remove_duplicate_squares()
+    sl.remove_squares_mismatched_neighbours()
+    all_corners = sl.all_corners
+    clear_img = np.zeros(img.shape)
+    for c in all_corners:
+        clear_img[c[1], c[0]] = 255
+    plt.figure(1)
+    plt.subplot(3, 4, i + 1)
+    # plt.imshow(p, "gray")
+    # plt.imshow(clear_img, "gray")
+    p = sl.draw_all(img)
+    # plt.subplot("121")
+    plt.imshow(p)
+    print("Found {} squares".format(len(sl)))
 plt.show()
