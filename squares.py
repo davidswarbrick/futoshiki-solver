@@ -25,6 +25,10 @@ class Square:
         return cv2.contourArea(self.corners)
 
     @property
+    def average_side_length(self):
+        return np.sqrt(self.area)
+
+    @property
     def centre(self):
         return np.array(
             [np.mean(self.corners[:, 0]).round(), np.mean(self.corners[:, 1]).round(),]
@@ -78,15 +82,6 @@ class SquareList(collections.UserList):
     def all_areas(self):
         return [x.area for x in self.data]
 
-    @property
-    def distances_to_closest_neighbour(self):
-        distances = []
-        for square in self.data:
-            closest_squares = self.sort_by_dist(square.centre)
-            # position 0 will be this square
-            distances.append(np.linalg.norm(closest_squares[1].centre - square.centre))
-        return distances
-
     def sort_by_area(self, reverse=False):
         self.data.sort(key=lambda x: x.area, reverse=reverse)
 
@@ -113,20 +108,26 @@ class SquareList(collections.UserList):
         duplicate_indices = list(set(duplicate_indices))
         for index in sorted(duplicate_indices, reverse=True):
             del self.data[index]
-        return
 
-    def remove_squares_mismatched_neighbours(self):
+    def remove_squares_mismatched_neighbours(self, num_neighbours=3):
         non_puzzle_square_indices = []
-        # mean_dist = np.mean(self.distances_to_closest_neighbour)
         for index, square in enumerate(self.data):
-            closest_squares = self.sort_by_dist(square.centre)
-            all_neighbours_similar_size = True
-            for j in range(5):
-                all_neighbours_similar_size = all_neighbours_similar_size and (
-                    Square.relative_area_increase(square, closest_squares[j]) < 2.5
-                )
-            if not all_neighbours_similar_size:
-                non_puzzle_square_indices.append(index)
+            closest_squares = self.sort_by_dist(square.centre)[1 : 1 + num_neighbours]
+            neighbours = np.full((num_neighbours, 2), np.inf)
+            for i, neighbour in enumerate(closest_squares):
+                diff = neighbour.centre - square.centre
+                dist = np.linalg.norm(diff)
+                ang = np.rad2deg(np.arctan2(diff[1], diff[0])) + 22 // 45  # degrees
+                if (
+                    ang not in neighbours[:, 1]
+                    and dist > square.average_side_length * 1.2
+                    # and dist < square.average_side_length * 3.5
+                ):
+                    neighbours[i, :] = [dist, ang]
+                else:
+                    non_puzzle_square_indices.append(index)
+                    break
+
         non_puzzle_square_indices = list(set(non_puzzle_square_indices))
         for index in sorted(non_puzzle_square_indices, reverse=True):
             del self.data[index]
@@ -156,8 +157,8 @@ def find_squares(img, thresh=50, ratio=2.5):
         # relatively large area (to filter out noisy contours) and be convex
         if (
             len(approx) == 4
-            # and cv2.contourArea(approx) > 1000
             and cv2.isContourConvex(approx)
+            and cv2.contourArea(approx) > 100
             and Square.points_form_a_square(approx)
         ):
             # found a square
@@ -172,14 +173,13 @@ for i in range(11):
     imgs.append(img)
 
 # p = cv2.imread("img/3712crop.jpg",0)
-p = imgs[2]
+p = imgs[4]
 sl = find_squares(p, thresh=50)
 sl.remove_duplicate_squares()
-# sl.remove_squares_mismatched_neighbours()
-# print(np.mean(sl.distances_to_closest_neighbour))
+sl.remove_squares_mismatched_neighbours()
 all_corners = sl.all_corners
 clear_img = np.zeros(p.shape)
-
+print(p.shape)
 for c in all_corners:
     clear_img[c[1], c[0]] = 255
 
